@@ -247,12 +247,31 @@ body {
 
 /* Responsive */
 @media (max-width: 768px) {
+    body {
+        padding: 1rem 0;
+    }
+
+    .container {
+        width: 95%;
+        padding: 0.5rem;
+    }
+
     .glass-card {
-        padding: 3rem 1.5rem;
+        padding: 2.5rem 1.25rem;
     }
     
     .title {
-        font-size: 2.5rem;
+        font-size: 2rem; /* Smaller font to prevent cutoff */
+        word-break: break-word; /* Ensure long words like extraordinary break safely if needed */
+        hyphens: auto;
+    }
+
+    .subtitle {
+        font-size: 1rem;
+    }
+    
+    .status-badge {
+        margin-bottom: 2.5rem;
     }
     
     .notify-form {
