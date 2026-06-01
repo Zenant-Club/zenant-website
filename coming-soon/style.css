@@ -1,12 +1,12 @@
 :root {
-    --primary-color: #6366f1; /* Indigo */
-    --secondary-color: #8b5cf6; /* Violet */
-    --accent-color: #ec4899; /* Pink */
-    --bg-dark: #0f111a;
-    --text-primary: #ffffff;
-    --text-secondary: #94a3b8;
-    --glass-bg: rgba(255, 255, 255, 0.03);
-    --glass-border: rgba(255, 255, 255, 0.08);
+    --primary-color: #A04E3C; /* Rust/Terracotta */
+    --secondary-color: #8d4434; /* Darker Rust */
+    --accent-color: #d47a66; /* Lighter Rust */
+    --bg-dark: #FEF2E2; /* Warm Off-white */
+    --text-primary: #3B2F2F; /* Dark Brown */
+    --text-secondary: #6B5B5B; /* Medium Brown */
+    --glass-bg: rgba(255, 255, 255, 0.4);
+    --glass-border: rgba(160, 78, 60, 0.15);
 }
 
 * {
@@ -101,20 +101,14 @@ body {
 /* Logo */
 .logo {
     margin-bottom: 2rem;
+    display: flex;
+    justify-content: center;
 }
 
-.logo-text {
-    font-size: 2.5rem;
-    font-weight: 800;
-    letter-spacing: -1px;
-    background: linear-gradient(to right, #fff, #a5b4fc);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-.dot {
-    color: var(--accent-color);
-    -webkit-text-fill-color: var(--accent-color);
+.logo-image {
+    max-height: 50px;
+    width: auto;
+    object-fit: contain;
 }
 
 /* Typography */
@@ -123,7 +117,7 @@ body {
     font-weight: 800;
     line-height: 1.2;
     margin-bottom: 1.5rem;
-    background: linear-gradient(135deg, #fff 0%, #cbd5e1 100%);
+    background: linear-gradient(135deg, var(--text-primary) 0%, var(--primary-color) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
@@ -143,8 +137,8 @@ body {
     align-items: center;
     gap: 0.75rem;
     padding: 0.75rem 1.5rem;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(160, 78, 60, 0.05);
+    border: 1px solid rgba(160, 78, 60, 0.15);
     border-radius: 9999px;
     margin-bottom: 3.5rem;
 }
@@ -180,7 +174,7 @@ body {
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 1px;
-    color: #e2e8f0;
+    color: var(--primary-color);
 }
 
 /* Notify Section */
@@ -205,7 +199,7 @@ body {
 
 .email-input {
     flex: 1;
-    background: rgba(0, 0, 0, 0.2);
+    background: rgba(255, 255, 255, 0.6);
     border: 1px solid var(--glass-border);
     border-radius: 12px;
     padding: 1rem 1.5rem;
@@ -218,11 +212,11 @@ body {
 
 .email-input:focus {
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+    box-shadow: 0 0 0 2px rgba(160, 78, 60, 0.2);
 }
 
 .email-input::placeholder {
-    color: #64748b;
+    color: var(--text-secondary);
 }
 
 .notify-btn {
