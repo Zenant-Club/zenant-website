@@ -23,13 +23,15 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
     position: relative;
+    padding: 3rem 0;
 }
 
 /* Background Effects */
 .background-effects {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
@@ -75,6 +77,7 @@ body {
     width: 90%;
     max-width: 800px;
     padding: 2rem;
+    margin: auto;
 }
 
 .glass-card {
