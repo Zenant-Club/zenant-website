@@ -3,7 +3,7 @@ import { CheckCircle2, Shield, Users, Zap } from "lucide-react";
 const solutions = [
   {
     icon: CheckCircle2,
-    title: "Zero Brokerage",
+    title: "Low Brokerage",
     description: "Connect directly with property owners and keep your hard-earned money where it belongs — with you.",
   },
   {

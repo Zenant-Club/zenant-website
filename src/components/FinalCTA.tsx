@@ -11,7 +11,7 @@ export function FinalCTA() {
           Just one chat away.
         </p>
         <a
-          href="https://wa.me/1234567890"
+          href="https://wa.me/918050410310"
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center gap-3 bg-white text-[#A04E3C] px-10 py-5 rounded-full font-lora text-lg hover:bg-[#FEF2E2] transition-all hover:shadow-2xl transform hover:scale-105"

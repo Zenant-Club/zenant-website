@@ -8,6 +8,8 @@ import { HowItWorks } from "./components/HowItWorks";
 import { PropertiesGallery } from "./components/PropertiesGallery";
 import { Testimonials } from "./components/Testimonials";
 import { CareersPage } from "./components/CareersPage";
+import { AboutPage } from "./components/AboutPage";
+import { ContactPage } from "./components/ContactPage";
 import { FinalCTA } from "./components/FinalCTA";
 import { Footer } from "./components/Footer";
 
@@ -55,6 +57,8 @@ function App() {
       <Header />
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/contact" element={<ContactPage />} />
         <Route path="/careers" element={<CareersPage />} />
       </Routes>
     </div>

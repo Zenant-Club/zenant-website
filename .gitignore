@@ -21,7 +21,7 @@ public/fonts/
 *.njsproj
 *.sln
 *.sw?
-
+/property_photos
 # Vite specific
 dist
 dist-ssr

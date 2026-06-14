@@ -12,14 +12,13 @@
 }
 
 .zenant-propertiesGallery__media {
-  aspect-ratio: 16 / 9;
-  width: 100%;
+  height: clamp(450px, 65vh, 800px);
+  width: max-content;
   display: block;
-  min-height: 200px;
 }
 
 .zenant-propertiesGallery__media img {
-  width: 100%;
+  width: auto;
   height: 100%;
   object-fit: cover;
 }
@@ -29,27 +28,29 @@
   height: 100%;
   object-fit: cover;
   transition: transform 0.7s ease;
-}
-
-.zenant-propertiesGallery__image--active {
-  transform: scale(1);
-}
-
-.zenant-propertiesGallery__image--inactive {
   transform: scale(1.035);
+}
+
+.is-snapped .zenant-propertiesGallery__image {
+  transform: scale(1);
 }
 
 .zenant-propertiesGallery__overlay {
   background-color: var(--zenant-secondary);
   transition: opacity 0.5s ease;
+  opacity: 0.7;
 }
 
-.zenant-propertiesGallery__overlay--active {
+.is-snapped .zenant-propertiesGallery__overlay {
   opacity: 0;
 }
 
-.zenant-propertiesGallery__overlay--inactive {
-  opacity: 0.7;
+.zenant-propertiesGallery__slide {
+  z-index: 0;
+}
+
+.zenant-propertiesGallery__slide.is-snapped {
+  z-index: 10;
 }
 
 .zenant-propertiesGallery__controls {
@@ -133,7 +134,7 @@
 }
 
 .zenant-propertiesGallery__slide {
-  flex: 0 0 88%;
+  flex: 0 0 auto;
   min-width: 0;
 }
 
@@ -143,7 +144,7 @@
   }
 
   .zenant-propertiesGallery__slide {
-    flex-basis: 82%;
+    flex: 0 0 auto;
   }
 }
 
@@ -163,19 +164,63 @@
   }
 
   .zenant-propertiesGallery__slide {
-    flex-basis: 72%;
+    flex: 0 0 auto;
   }
 }
 
 @media (min-width: 1024px) {
   .zenant-propertiesGallery__slide {
-    flex-basis: 70%;
+    flex: 0 0 auto;
   }
 }
 
 @media (min-width: 1280px) {
   .zenant-propertiesGallery__slide {
-    flex-basis: 68%;
+    flex: 0 0 auto;
   }
+}
+
+/* Lightbox Modal CSS */
+.zenant-lightbox-overlay {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 2rem;
+}
+
+.zenant-lightbox-close {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  color: rgba(255, 255, 255, 0.7);
+  padding: 0.5rem;
+  cursor: pointer;
+  z-index: 10000;
+  transition: color 0.2s ease;
+}
+
+.zenant-lightbox-close:hover {
+  color: white;
+}
+
+.zenant-lightbox-image {
+  max-width: 85vw;
+  max-height: 85vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+  border-radius: 0.5rem;
+  user-select: none;
+  cursor: zoom-out;
 }
 

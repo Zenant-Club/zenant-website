@@ -8,16 +8,10 @@ export function Footer() {
           {/* Logo & Description */}
           <div>
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 bg-[#A04E3C] rounded-lg flex items-center justify-center">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M3 21L12 3L21 21H3Z" fill="white" stroke="white" strokeWidth="2" strokeLinejoin="round"/>
-                  <path d="M12 3V12" stroke="#A04E3C" strokeWidth="2" strokeLinecap="round"/>
-                </svg>
-              </div>
-              <span className="font-heading-78 text-2xl tracking-tight">ZENANT</span>
+              <img src="/logo.png" alt="Zenant Logo" className="h-10 w-auto object-contain" />
             </div>
             <p className="font-lora text-white/70 leading-relaxed">
-              Connecting tenants to their dream homes — hassle-free, broker-free, stress-free.
+              Empowering tenants to secure housing — simplified, transparent, and affordable.
             </p>
           </div>
 
@@ -31,12 +25,12 @@ export function Footer() {
                 </a>
               </li>
               <li>
-                <a href="/#about" className="hover:text-[#A04E3C] transition-colors">
+                <a href="/about" className="hover:text-[#A04E3C] transition-colors">
                   About
                 </a>
               </li>
               <li>
-                <a href="/#contact" className="hover:text-[#A04E3C] transition-colors">
+                <a href="/contact" className="hover:text-[#A04E3C] transition-colors">
                   Contact
                 </a>
               </li>
@@ -53,7 +47,7 @@ export function Footer() {
             <h3 className="font-heading text-lg mb-4">Connect With Us</h3>
             <div className="flex gap-4 mb-4">
               <a
-                href="https://linkedin.com"
+                href="https://www.linkedin.com/company/zenantclub/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-[#A04E3C] transition-colors"
@@ -61,7 +55,7 @@ export function Footer() {
                 <Linkedin className="w-5 h-5" />
               </a>
               <a
-                href="https://instagram.com"
+                href="https://www.instagram.com/zenant.club"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-[#A04E3C] transition-colors"
@@ -78,15 +72,25 @@ export function Footer() {
         {/* Bottom Bar */}
         <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="font-lora text-white/60 text-sm">
-            © 2025 Zenant. All rights reserved.
+            © 2026 Zenant. All rights reserved.
           </p>
           <div className="flex gap-6 font-lora text-white/60 text-sm">
-            <a href="#" className="hover:text-white transition-colors">
-              Privacy
+            <a 
+              href="/Zenant-Privacy-Policy.pdf" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="hover:text-white transition-colors"
+            >
+              Privacy Policy
             </a>
             <span>•</span>
-            <a href="#" className="hover:text-white transition-colors">
-              Terms
+            <a 
+              href="/Zenant-Terms-of-Service.pdf" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="hover:text-white transition-colors"
+            >
+              Terms of Service
             </a>
           </div>
         </div>

@@ -51,11 +51,10 @@ export function Hero({ backgroundImage }: HeroProps) {
             }}
           >
             Chat with us on WhatsApp and get personalized property
-            recommendations, verified listings, and direct owner contact — no
-            brokers, no stress.
+            recommendations, verified listings and transparent process.
           </p>
           <a
-            href="https://wa.me/1234567890"
+            href="https://wa.me/918050410310"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-3 bg-[#A04E3C] text-white px-8 py-4 rounded-full font-lora text-lg md:text-xl font-medium hover:bg-[#8D4434] transition-all duration-300 transform hover:-translate-y-1"

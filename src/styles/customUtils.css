@@ -1,0 +1,35 @@
+/* Custom utilities since index.css is statically generated and missing some Tailwind classes */
+
+@media (min-width: 768px) {
+  .md\:hidden {
+    display: none !important;
+  }
+}
+
+.max-h-0 {
+  max-height: 0px !important;
+}
+
+.max-h-96 {
+  max-height: 24rem !important;
+}
+
+.opacity-0 {
+  opacity: 0 !important;
+}
+
+.opacity-100 {
+  opacity: 1 !important;
+}
+
+.overflow-hidden {
+  overflow: hidden !important;
+}
+
+.border-b {
+  border-bottom-width: 1px !important;
+}
+
+.text-left {
+  text-align: left !important;
+}

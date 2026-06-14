@@ -1,0 +1,21 @@
+[
+  { "id": 1,  "image": "/gallery/IMG_3710.JPG",                                        "title": "The Bandra Loft",       "location": "Bandra West",    "description": "You'll feel right at home with 10-foot ceilings and state-of-the-art materials." },
+  { "id": 2,  "image": "/gallery/IMG_1578.JPG",                                        "title": "Powai Green View",      "location": "Powai",          "description": "Surrounded by nature, this apartment offers a peaceful retreat from the city noise." },
+  { "id": 3,  "image": "/gallery/IMG_2493.JPG",                                        "title": "Juhu Sea Breeze",       "location": "Juhu Tara",      "description": "Luxury living with an ocean view, featuring premium finishes and spacious balconies." },
+  { "id": 4,  "image": "/gallery/IMG_3513.JPG",                                        "title": "Parel Minimalist",      "location": "Lower Parel",    "description": "Clean lines and open spaces define this modern minimalist apartment." },
+  { "id": 5,  "image": "/gallery/IMG_3715.JPG",                                        "title": "Worli Elegance",        "location": "Worli",          "description": "A statement of luxury with panoramic cityscapes." },
+  { "id": 6,  "image": "/gallery/IMG_3721.JPG",                                        "title": "Colaba Heritage",       "location": "Colaba",         "description": "Classic architecture meets modern amenities." },
+  { "id": 7,  "image": "/gallery/IMG_5186.JPG",                                        "title": "Khar Tranquility",      "location": "Khar West",      "description": "Quiet and serene, tucked away from the bustling city." },
+  { "id": 8,  "image": "/gallery/IMG_9196.JPG",                                        "title": "Goregaon Heights",      "location": "Goregaon East",  "description": "Elevated living with exceptional views." },
+  { "id": 9,  "image": "/gallery/IMG_0975.JPG",                                        "title": "BKC Executive",         "location": "BKC",            "description": "Perfectly located for the modern professional." },
+  { "id": 10, "image": "/gallery/IMG_1488.JPG",                                        "title": "Malad Oasis",           "location": "Malad West",     "description": "A refreshing take on urban living." },
+  { "id": 11, "image": "/gallery/IMG_1725.JPG",                                        "title": "Dadar Central",         "location": "Dadar",          "description": "In the heart of the city, connected to everything." },
+  { "id": 12, "image": "/gallery/IMG_3515.JPG",                                        "title": "Versova Retreat",       "location": "Versova",        "description": "Laid-back coastal living with modern comforts." },
+  { "id": 13, "image": "/gallery/IMG_3706.JPG",                                        "title": "Santacruz Haven",       "location": "Santacruz",      "description": "Spacious and bright, designed for family living." },
+  { "id": 14, "image": "/gallery/IMG_3709.JPG",                                        "title": "Chembur Green",         "location": "Chembur",        "description": "Lush surroundings and peaceful environment." },
+  { "id": 15, "image": "/gallery/1ef8dadc-e29a-42c7-b496-a548a1f167ae.jpg",           "title": "Vile Parle Charm",      "location": "Vile Parle",     "description": "A blend of traditional charm and modern convenience." },
+  { "id": 16, "image": "/gallery/628182261_928351906188023_933484629805898065_n.jpg.jpeg", "title": "Borivali Vista",    "location": "Borivali",       "description": "Enjoy the best of suburban living." },
+  { "id": 17, "image": "/gallery/IMG_20260414_172934323.jpg",                          "title": "Kandivali Bliss",       "location": "Kandivali",      "description": "Contemporary design in a thriving neighborhood." },
+  { "id": 18, "image": "/gallery/IMG_20260527_154931742.jpg",                          "title": "Mulund Serenity",       "location": "Mulund",         "description": "A peaceful sanctuary in the eastern suburbs." },
+  { "id": 19, "image": "/gallery/aaa3d483-e9ac-44fa-ad66-bec1336407c0.jpg",           "title": "Thane Panoramas",       "location": "Thane",          "description": "Expansive views and premium lifestyle." }
+]

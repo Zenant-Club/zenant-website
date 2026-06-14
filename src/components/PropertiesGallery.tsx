@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import ClassNames from "embla-carousel-class-names";
+import { ArrowLeft, ArrowRight, X } from "lucide-react";
+import { createPortal } from "react-dom";
 import clsx from "clsx";
 
 interface Property {
@@ -11,53 +13,26 @@ interface Property {
   description: string;
 }
 
-const properties: Property[] = [
-  {
-    id: 1,
-    image: "https://images.unsplash.com/photo-1600607686527-6fb886090705?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80",
-    title: "The Bandra Loft",
-    location: "Bandra West",
-    description: "You'll feel right at home with 10-foot ceilings and state-of-the-art materials.",
-  },
-  {
-    id: 2,
-    image: "https://images.unsplash.com/photo-1600585154526-990dced4db0d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80",
-    title: "Andheri Solace",
-    location: "Andheri East",
-    description: "A bright, airy space designed for modern living in the heart of the suburbs.",
-  },
-  {
-    id: 3,
-    image: "https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80",
-    title: "Powai Green View",
-    location: "Powai",
-    description: "Surrounded by nature, this apartment offers a peaceful retreat from the city noise.",
-  },
-  {
-    id: 4,
-    image: "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80",
-    title: "Juhu Sea Breeze",
-    location: "Juhu Tara",
-    description: "Luxury living with an ocean view, featuring premium finishes and spacious balconies.",
-  },
-  {
-    id: 5,
-    image: "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80",
-    title: "Parel Minimalist",
-    location: "Lower Parel",
-    description: "Clean lines and open spaces define this modern minimalist apartment.",
-  },
-];
-
 export function PropertiesGallery() {
+  const [properties, setProperties] = useState<Property[]>([]);
+
+  useEffect(() => {
+    fetch("/gallery/properties.json")
+      .then((res) => res.json())
+      .then((data) => setProperties(data))
+      .catch((err) => console.error("Failed to load properties:", err));
+  }, []);
+  
   const [emblaRef, emblaApi] = useEmblaCarousel({ 
     align: "start",
-    loop: false,
+    loop: true,
+    dragFree: true,
     duration: 40,
-  });
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  }, [ClassNames({ snapped: 'is-snapped' })]);
+
   const [canScrollNext, setCanScrollNext] = useState(true);
-  const [canScrollPrev, setCanScrollPrev] = useState(false);
+  const [canScrollPrev, setCanScrollPrev] = useState(true);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   const scrollPrev = useCallback(() => {
     if (emblaApi) emblaApi.scrollPrev();
@@ -68,7 +43,6 @@ export function PropertiesGallery() {
   }, [emblaApi]);
 
   const onSelect = useCallback((api: any) => {
-    setSelectedIndex(api.selectedScrollSnap());
     setCanScrollNext(api.canScrollNext());
     setCanScrollPrev(api.canScrollPrev());
   }, []);
@@ -83,6 +57,13 @@ export function PropertiesGallery() {
       emblaApi.off('reInit', onSelect);
     };
   }, [emblaApi, onSelect]);
+
+  // Re-initialize embla when properties load
+  useEffect(() => {
+    if (emblaApi && properties.length > 0) {
+      emblaApi.reInit();
+    }
+  }, [emblaApi, properties]);
 
   return (
     <section className="zenant-propertiesGallery py-20 lg:py-32 overflow-hidden">
@@ -102,56 +83,29 @@ export function PropertiesGallery() {
         </div>
 
         {/* Right Column: Gallery Carousel */}
-        <div className="lg:w-[65%] w-full relative lg:mr-[-12vw] xl:mr-[-18vw] zenant-propertiesGallery__mediaColumn">
+        <div className="lg:w-[65%] w-full relative xl:mr-[-18vw] zenant-propertiesGallery__mediaColumn">
           
           <div className="overflow-hidden" ref={emblaRef}>
             <div className="zenant-propertiesGallery__track">
-              {properties.map((item, index) => (
+              {properties.map((item) => (
                   <div 
                     key={item.id} 
-                    className={clsx(
-                      "zenant-propertiesGallery__slide relative transition-all duration-500",
-                    )}
+                    className="zenant-propertiesGallery__slide relative transition-all duration-500"
                   >
                   {/* Image Container */}
-                  <div className="relative zenant-propertiesGallery__media zenant-propertiesGallery__surface group overflow-hidden">
+                  <div 
+                    className="relative zenant-propertiesGallery__media zenant-propertiesGallery__surface group overflow-hidden cursor-zoom-in"
+                    onClick={() => setPreviewImage(item.image)}
+                  >
                     <img
                       src={item.image}
                       alt={item.title}
                       loading="lazy"
-                      className={clsx(
-                        "zenant-propertiesGallery__image",
-                        index === selectedIndex
-                          ? "zenant-propertiesGallery__image--active"
-                          : "zenant-propertiesGallery__image--inactive",
-                      )}
+                      className="zenant-propertiesGallery__image"
                     />
                     
                     {/* Dark Overlay for inactive slides */}
-                    <div
-                      className={clsx(
-                        "absolute inset-0 zenant-propertiesGallery__overlay",
-                        index === selectedIndex
-                          ? "zenant-propertiesGallery__overlay--active"
-                          : "zenant-propertiesGallery__overlay--inactive",
-                      )}
-                    />
-
-                    <div
-                      className={clsx(
-                        "zenant-propertiesGallery__caption",
-                        index === selectedIndex
-                          ? "zenant-propertiesGallery__caption--active"
-                          : "zenant-propertiesGallery__caption--inactive",
-                      )}
-                    >
-                      <h3 className="font-lora text-base md:text-lg">
-                        {item.title} | {item.location}
-                      </h3>
-                      <p className="font-lora zenant-propertiesGallery__mutedText text-sm leading-relaxed max-w-xl">
-                        {item.description}
-                      </p>
-                    </div>
+                    <div className="absolute inset-0 zenant-propertiesGallery__overlay" />
                   </div>
                 </div>
               ))}
@@ -183,6 +137,32 @@ export function PropertiesGallery() {
 
         </div>
       </div>
+
+      {/* Lightbox Preview Mode */}
+      {previewImage && typeof document !== 'undefined' && createPortal(
+        <div 
+          className="zenant-lightbox-overlay"
+          onClick={() => setPreviewImage(null)}
+        >
+          <button 
+            className="zenant-lightbox-close"
+            onClick={(e) => {
+              e.stopPropagation();
+              setPreviewImage(null);
+            }}
+            aria-label="Close preview"
+          >
+            <X size={40} strokeWidth={1.5} />
+          </button>
+          <img 
+            src={previewImage} 
+            alt="Preview" 
+            className="zenant-lightbox-image"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>,
+        document.body
+      )}
     </section>
   );
 }

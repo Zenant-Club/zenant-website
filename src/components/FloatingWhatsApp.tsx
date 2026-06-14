@@ -4,10 +4,10 @@ import { motion } from "motion/react";
 export function FloatingWhatsApp() {
   return (
     <motion.a
-      href="https://wa.me/1234567890"
+      href="https://wa.me/918050410310"
       target="_blank"
       rel="noopener noreferrer"
-      className="fixed bottom-8 right-8 z-50 flex items-center gap-3 bg-[#A04E3C] text-white px-6 py-4 rounded-full shadow-2xl hover:bg-[#8d4434] transition-all hover:shadow-[#A04E3C]/50 group"
+      className="fixed bottom-6 right-4 sm:bottom-8 sm:right-8 z-50 flex items-center gap-3 bg-[#A04E3C] text-white sm:px-6 px-4 sm:py-4 py-3 rounded-full shadow-2xl hover:bg-[#8d4434] transition-all hover:shadow-[#A04E3C]/50 group"
       initial={{ scale: 0, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
       transition={{ delay: 0.5, type: "spring", stiffness: 260, damping: 20 }}
@@ -24,7 +24,7 @@ export function FloatingWhatsApp() {
           repeatType: "loop"
         }}
       >
-        <MessageCircle className="w-6 h-6" />
+        <MessageCircle className="w-5 h-5 sm:w-6 sm:h-6" />
       </motion.div>
       <span className="font-lora font-medium hidden sm:block">Chat with us</span>
       

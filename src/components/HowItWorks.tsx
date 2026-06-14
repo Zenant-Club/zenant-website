@@ -16,8 +16,8 @@ const steps = [
   {
     number: "03",
     icon: Home,
-    title: "Get shortlisted properties + owner contacts",
-    description: "Receive verified properties that match your criteria, complete with direct owner contact details.",
+    title: "Get shortlisted properties and schedule your visits",
+    description: "Receive verified properties that match your criteria and schedule visits at your convenience.",
   },
 ];
 
@@ -34,19 +34,27 @@ export function HowItWorks() {
 
         {/* Desktop Timeline */}
         <div className="hidden lg:block relative">
-          <div className="absolute top-32 left-0 right-0 h-1 bg-[#A04E3C]/20">
-            <div className="absolute inset-0 bg-gradient-to-r from-[#A04E3C] via-[#A04E3C] to-[#A04E3C]/20"></div>
-          </div>
+          {/* Line sits at the vertical center of the icon circles (h-24 = 6rem, center = 3rem = top-12) */}
+          <div
+            style={{
+              position: "absolute",
+              top: "3rem",
+              left: 0,
+              right: 0,
+              height: "3px",
+              background: "linear-gradient(to right, #A04E3C, #A04E3C, rgba(160,78,60,0.2))",
+            }}
+          />
           
           <div className="grid grid-cols-3 gap-8 relative">
             {steps.map((step, index) => {
               const Icon = step.icon;
               return (
                 <div key={index} className="flex flex-col items-center text-center">
-                  <div className="w-24 h-24 bg-[#A04E3C] rounded-full flex items-center justify-center mb-6 relative z-10 shadow-lg">
+                  <div className="w-24 h-24 bg-[#A04E3C] rounded-full flex items-center justify-center relative z-10 shadow-lg" style={{ marginBottom: "1.5rem" }}>
                     <Icon className="w-10 h-10 text-white" />
                   </div>
-                  <div className="font-heading-78 text-5xl text-[#A04E3C]/20 mb-4">
+                  <div className="font-heading-78 text-5xl text-[#A04E3C]/25 mb-4">
                     {step.number}
                   </div>
                   <h3 className="font-heading text-2xl text-[#3B2F2F] mb-4">

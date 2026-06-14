@@ -1,52 +1,52 @@
-import { DollarSign, AlertTriangle, FileText, PhoneOff, CheckCircle2, Shield, Users, Zap } from "lucide-react";
+import { UserX, MonitorOff, FileX, MessageSquareOff, ShieldCheck, Home, FileCheck, Headphones, Users } from "lucide-react";
 
 const comparisons = [
   {
     problem: {
-      icon: DollarSign,
-      title: "High Brokerage Fees",
-      description: "Paying one month's rent or more just to find a place drains your budget.",
+      icon: UserX,
+      title: "Unreliable Brokerage Experience",
+      description: "Paying brokerage doesn't always guarantee genuine listings, timely responses, or professional assistance.",
     },
     solution: {
-      icon: CheckCircle2,
-      title: "Zero Brokerage",
-      description: "Connect directly with property owners and keep your hard-earned money with you.",
+      icon: ShieldCheck,
+      title: "Trusted Rental Partner",
+      description: "Verified properties, transparent communication, documentation assistance, and dedicated support throughout the rental process.",
     },
   },
   {
     problem: {
-      icon: AlertTriangle,
+      icon: MonitorOff,
       title: "Fake Listings",
-      description: "Misleading photos and false availability waste your time and leave you frustrated.",
+      description: "Misleading photos, incorrect information, and unavailable properties waste your time and cause frustration.",
     },
     solution: {
-      icon: Shield,
+      icon: Home,
       title: "Verified Properties",
-      description: "Every listing is verified by our team. What you see is what you get — no surprises.",
+      description: "Every property is verified by our team for accurate information and genuine availability.",
     },
   },
   {
     problem: {
-      icon: FileText,
-      title: "Endless Paperwork",
-      description: "Complex agreements and countless documents make renting unnecessarily complicated.",
+      icon: FileX,
+      title: "Complex Paperwork",
+      description: "Rental agreements and documentation can be confusing and time-consuming.",
     },
     solution: {
-      icon: Users,
-      title: "Direct Owner Contact",
-      description: "Chat directly with owners, ask questions, and negotiate — all without middlemen.",
+      icon: FileCheck,
+      title: "Easy Documentation",
+      description: "We assist with rental agreements and paperwork, making the process smooth and hassle-free.",
     },
   },
   {
     problem: {
-      icon: PhoneOff,
-      title: "Unresponsive Owners",
-      description: "Trying to reach property owners through middlemen leads to delays and miscommunication.",
+      icon: MessageSquareOff,
+      title: "Poor Communication",
+      description: "Delays in responses from owners and brokers make renting stressful and unreliable.",
     },
     solution: {
-      icon: Zap,
-      title: "Fast Matching via WhatsApp",
-      description: "Get personalized matches instantly on WhatsApp. Simple, fast, and responsive.",
+      icon: Headphones,
+      title: "Dedicated Assistance",
+      description: "Our team coordinates with owners and provides quick updates at every step of your rental journey.",
     },
   },
 ];
