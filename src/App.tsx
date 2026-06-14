@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { Route, Routes, useLocation } from "react-router-dom";
 import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 import { Header } from "./components/Header";
 import { Hero } from "./components/Hero";
 import { FloatingWhatsApp } from "./components/FloatingWhatsApp";
@@ -63,6 +64,7 @@ function App() {
         <Route path="/careers" element={<CareersPage />} />
       </Routes>
       <Analytics />
+      <SpeedInsights />
     </div>
   );
 }
