@@ -8,9 +8,6 @@ export function FloatingWhatsApp() {
       target="_blank"
       rel="noopener noreferrer"
       className="fixed bottom-6 right-4 sm:bottom-8 sm:right-8 z-50 flex items-center gap-3 bg-[#A04E3C] text-white sm:px-6 px-4 sm:py-4 py-3 rounded-full shadow-2xl hover:bg-[#8d4434] transition-all hover:shadow-[#A04E3C]/50 group"
-      initial={{ scale: 0, opacity: 0 }}
-      animate={{ scale: 1, opacity: 1 }}
-      transition={{ delay: 0.5, type: "spring", stiffness: 260, damping: 20 }}
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
     >
@@ -30,7 +27,7 @@ export function FloatingWhatsApp() {
       
       {/* Pulse effect */}
       <motion.div
-        className="absolute inset-0 rounded-full bg-[#A04E3C]"
+        className="absolute inset-0 rounded-full bg-[#A04E3C] -z-10"
         initial={{ scale: 1, opacity: 0.5 }}
         animate={{ 
           scale: [1, 1.3, 1],
