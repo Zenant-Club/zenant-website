@@ -1,51 +1,51 @@
-import { UserX, MonitorOff, FileX, MessageSquareOff, ShieldCheck, Home, FileCheck, Headphones, Users } from "lucide-react";
+import { UserX, MonitorOff, FileX, MessageSquareOff, ShieldCheck, Home, FileCheck, Headphones, ArrowDown } from "lucide-react";
 
 const comparisons = [
   {
     problem: {
       icon: UserX,
-      title: "Unreliable Brokerage Experience",
-      description: "Paying brokerage doesn't always guarantee genuine listings, timely responses, or professional assistance.",
+      title: "Unreliable brokerage",
+      description: "Paying brokerage doesn't guarantee genuine listings, timely responses, or real assistance.",
     },
     solution: {
       icon: ShieldCheck,
-      title: "Trusted Rental Partner",
-      description: "Verified properties, transparent communication, documentation assistance, and dedicated support throughout the rental process.",
+      title: "Trusted rental partner",
+      description: "Verified properties, transparent communication, and dedicated support throughout.",
     },
   },
   {
     problem: {
       icon: MonitorOff,
-      title: "Fake Listings",
-      description: "Misleading photos, incorrect information, and unavailable properties waste your time and cause frustration.",
+      title: "Fake listings",
+      description: "Misleading photos, wrong info, and unavailable properties waste your time and cause frustration.",
     },
     solution: {
       icon: Home,
-      title: "Verified Properties",
-      description: "Every property is verified by our team for accurate information and genuine availability.",
+      title: "Verified properties",
+      description: "Every property is checked by our team for accurate info and genuine availability.",
     },
   },
   {
     problem: {
       icon: FileX,
-      title: "Complex Paperwork",
-      description: "Rental agreements and documentation can be confusing and time-consuming.",
+      title: "Complex paperwork",
+      description: "Rental agreements and documentation can be confusing and time-consuming to manage.",
     },
     solution: {
       icon: FileCheck,
-      title: "Easy Documentation",
-      description: "We assist with rental agreements and paperwork, making the process smooth and hassle-free.",
+      title: "Easy documentation",
+      description: "We handle the paperwork so you can focus on finding your perfect home, not forms.",
     },
   },
   {
     problem: {
       icon: MessageSquareOff,
-      title: "Poor Communication",
+      title: "Poor communication",
       description: "Delays in responses from owners and brokers make renting stressful and unreliable.",
     },
     solution: {
       icon: Headphones,
-      title: "Dedicated Assistance",
+      title: "Dedicated assistance",
       description: "Our team coordinates with owners and provides quick updates at every step of your rental journey.",
     },
   },
@@ -53,7 +53,7 @@ const comparisons = [
 
 export function ProblemsVsSolutions() {
   return (
-    <section className="py-20 lg:py-28 bg-white">
+    <section className="py-20 lg:py-28 bg-transparent">
       <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
         {/* Section Header */}
         <div className="text-center mb-16">
@@ -98,6 +98,9 @@ export function ProblemsVsSolutions() {
                         <ProblemIcon className="w-6 h-6 text-red-600" />
                       </div>
                       <div className="flex-1">
+                        <div className="text-red-600 text-[10px] font-bold uppercase tracking-wider mb-1">
+                          Challenge
+                        </div>
                         <h4 className="font-heading text-xl text-[#3B2F2F] mb-2">
                           {comparison.problem.title}
                         </h4>
@@ -124,6 +127,9 @@ export function ProblemsVsSolutions() {
                         <SolutionIcon className="w-6 h-6 text-green-600" />
                       </div>
                       <div className="flex-1">
+                        <div className="text-green-600 text-[10px] font-bold uppercase tracking-wider mb-1">
+                          Zenant Solution
+                        </div>
                         <h4 className="font-heading text-xl text-[#3B2F2F] mb-2">
                           {comparison.solution.title}
                         </h4>
@@ -136,44 +142,54 @@ export function ProblemsVsSolutions() {
                 </div>
 
                 {/* Mobile Layout */}
-                <div className="lg:hidden space-y-4">
-                  {/* Problem Card */}
-                  <div className="bg-red-50/50 rounded-2xl p-5 border-2 border-red-200">
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
-                        <ProblemIcon className="w-5 h-5 text-red-600" />
+                <div className="lg:hidden">
+                  <div className="rounded-2xl border-2 border-gray-100 shadow-sm overflow-hidden flex flex-col">
+                    {/* Challenge Section */}
+                    <div className="bg-red-50/50 p-5 border-b border-gray-100">
+                      <div className="flex items-start gap-3 mb-2">
+                        <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                          <ProblemIcon className="w-5 h-5 text-red-600" />
+                        </div>
+                        <div className="pt-0.5">
+                          <div className="text-red-600 text-[10px] font-bold uppercase tracking-wider mb-0.5">
+                            Challenge
+                          </div>
+                          <h4 className="font-heading text-[17px] text-[#3B2F2F] leading-tight">
+                            {comparison.problem.title}
+                          </h4>
+                        </div>
                       </div>
-                      <h4 className="font-heading text-lg text-[#3B2F2F]">
-                        {comparison.problem.title}
-                      </h4>
+                      <p className="font-lora text-[#3B2F2F]/70 text-sm leading-relaxed ml-[52px]">
+                        {comparison.problem.description}
+                      </p>
                     </div>
-                    <p className="font-lora text-sm text-[#3B2F2F]/70 leading-relaxed ml-12">
-                      {comparison.problem.description}
-                    </p>
-                  </div>
 
-                  {/* Arrow Down */}
-                  <div className="flex justify-center">
-                    <div className="w-8 h-8 bg-[#A04E3C] rounded-full flex items-center justify-center">
-                      <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                      </svg>
-                    </div>
-                  </div>
-
-                  {/* Solution Card */}
-                  <div className="bg-green-50/50 rounded-2xl p-5 border-2 border-green-200">
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                        <SolutionIcon className="w-5 h-5 text-green-600" />
+                    {/* Divider Badge Wrapper */}
+                    <div className="relative flex justify-center z-10 h-0">
+                      <div className="absolute -top-4 w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center border-[3px] border-white shadow-sm">
+                        <ArrowDown className="w-4 h-4 text-white" />
                       </div>
-                      <h4 className="font-heading text-lg text-[#3B2F2F]">
-                        {comparison.solution.title}
-                      </h4>
                     </div>
-                    <p className="font-lora text-sm text-[#3B2F2F]/70 leading-relaxed ml-12">
-                      {comparison.solution.description}
-                    </p>
+
+                    {/* Solution Section */}
+                    <div className="bg-green-50/50 p-5">
+                      <div className="flex items-start gap-3 mb-2">
+                        <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                          <SolutionIcon className="w-5 h-5 text-green-600" />
+                        </div>
+                        <div className="pt-0.5">
+                          <div className="text-green-600 text-[10px] font-bold uppercase tracking-wider mb-0.5">
+                            Zenant Solution
+                          </div>
+                          <h4 className="font-heading text-[17px] text-[#3B2F2F] leading-tight">
+                            {comparison.solution.title}
+                          </h4>
+                        </div>
+                      </div>
+                      <p className="font-lora text-[#3B2F2F]/70 text-sm leading-relaxed ml-[52px]">
+                        {comparison.solution.description}
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>

@@ -1,44 +1,23 @@
 import { MessageCircle } from "lucide-react";
-import { motion } from "motion/react";
 
 export function FloatingWhatsApp() {
   return (
-    <motion.a
+    <a
       href="https://wa.me/918050410310"
       target="_blank"
       rel="noopener noreferrer"
-      className="fixed bottom-6 right-4 sm:bottom-8 sm:right-8 z-50 flex items-center gap-3 bg-[#A04E3C] text-white sm:px-6 px-4 sm:py-4 py-3 rounded-full shadow-2xl hover:bg-[#8d4434] transition-all hover:shadow-[#A04E3C]/50 group"
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
+      className="fixed bottom-6 right-4 sm:bottom-8 sm:right-8 z-50 flex items-center gap-3 bg-[#A04E3C] text-white sm:px-6 px-4 sm:py-4 py-3 rounded-full shadow-2xl hover:bg-[#8d4434] transition-all duration-300 hover:shadow-[#A04E3C]/50 hover:scale-105 active:scale-95 group"
     >
-      <motion.div
-        animate={{ 
-          scale: [1, 1.2, 1],
-        }}
-        transition={{ 
-          duration: 2,
-          repeat: Infinity,
-          repeatType: "loop"
-        }}
-      >
+      <div className="group-hover:animate-bounce">
         <MessageCircle className="w-5 h-5 sm:w-6 sm:h-6" />
-      </motion.div>
+      </div>
       <span className="font-lora font-medium hidden sm:block">Chat with us</span>
       
       {/* Pulse effect */}
-      <motion.div
-        className="absolute inset-0 rounded-full bg-[#A04E3C] -z-10"
-        initial={{ scale: 1, opacity: 0.5 }}
-        animate={{ 
-          scale: [1, 1.3, 1],
-          opacity: [0.5, 0, 0.5]
-        }}
-        transition={{ 
-          duration: 2,
-          repeat: Infinity,
-          repeatType: "loop"
-        }}
+      <div
+        className="absolute inset-0 rounded-full bg-[#A04E3C] opacity-50 animate-ping -z-10"
+        style={{ animationDuration: '2s' }}
       />
-    </motion.a>
+    </a>
   );
 }
