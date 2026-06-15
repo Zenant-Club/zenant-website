@@ -16,11 +16,12 @@ export function Testimonials() {
           Real Stories from Happy Tenants
         </p>
 
-        <div className="flex flex-row gap-4 lg:gap-8 overflow-x-auto pb-4 hide-scrollbar px-4 lg:px-0">
+        <div className="testimonials-grid gap-4 lg:gap-6 px-4 lg:px-0">
           {reviewImages.map((img, index) => (
             <div
               key={index}
-              className="w-[280px] lg:w-[320px] shrink-0 transition-all hover:-translate-y-1 rounded-3xl overflow-hidden shadow-sm hover:shadow-md"
+              className="w-full transition-all hover:-translate-y-1 rounded-3xl overflow-hidden shadow-sm hover:shadow-md"
+              style={{ minWidth: '0' }}
             >
               <img
                 src={img}
@@ -30,6 +31,19 @@ export function Testimonials() {
             </div>
           ))}
         </div>
+        
+        {/* Mobile override via inline style block to ensure it stacks on small screens */}
+        <style dangerouslySetInnerHTML={{__html: `
+          .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+          }
+          @media (max-width: 768px) {
+            .testimonials-grid {
+              grid-template-columns: 1fr !important;
+            }
+          }
+        `}} />
 
         <p className="font-lora text-lg text-[#3B2F2F]/50 text-center italic" style={{ marginTop: '2.5rem' }}>
           We're still improving — every piece of feedback helps us serve you better.
