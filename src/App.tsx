@@ -27,7 +27,6 @@ function HomePage() {
       <Testimonials />
       <FinalCTA />
       <Footer />
-      <FloatingWhatsApp />
     </>
   );
 }
@@ -63,6 +62,7 @@ function App() {
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/careers" element={<CareersPage />} />
       </Routes>
+      <FloatingWhatsApp />
       <Analytics />
       <SpeedInsights />
     </div>
