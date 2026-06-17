@@ -166,7 +166,7 @@ export function ProblemsVsSolutions() {
 
                     {/* Divider Badge Wrapper */}
                     <div className="relative flex justify-center z-10 h-0">
-                      <div className="absolute -top-4 w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center border-[3px] border-white shadow-sm">
+                      <div className="absolute w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center border-[3px] border-white shadow-sm" style={{ top: '-16px' }}>
                         <ArrowDown className="w-4 h-4 text-white" />
                       </div>
                     </div>

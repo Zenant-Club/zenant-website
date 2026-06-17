@@ -2056,72 +2056,191 @@ html {
 }
 
 /* ============================================================
-   WhatsApp CTA Button — Premium Animated Style
+   Navbar CTA Button — Zenant Premium Brand Style
    ============================================================ */
 
-@keyframes wa-border-glow {
-  0%, 100% {
-    box-shadow:
-      0 0 0 1.5px rgba(37, 211, 102, 0.45),
-      0 4px 12px rgba(37, 211, 102, 0.2);
-  }
-  50% {
-    box-shadow:
-      0 0 0 3.5px rgba(37, 211, 102, 0.7),
-      0 6px 16px rgba(37, 211, 102, 0.35);
-  }
+@keyframes zenant-btn-shimmer {
+  0% { transform: translateX(-120%) skewX(-20deg); }
+  100% { transform: translateX(220%) skewX(-20deg); }
 }
+
+
 
 .whatsapp-cta-btn {
   position: relative;
-  background: linear-gradient(
-    135deg,
-    #1ebe56 0%,
-    #25d366 100%
-  );
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  animation: wa-border-glow 2.5s ease-in-out infinite;
-  transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.3s cubic-bezier(0.25, 1, 0.5, 1);
-  overflow: visible;
+  isolation: isolate;
+  align-items: center;
+  gap: 7px;
+  height: 42px;
+  padding: 0 6px 0 6px;
+  min-width: 175px;
+  border-radius: 999px;
+  font-family: "Lora", serif;
+  font-weight: 700;
+  font-size: 0.875rem;
+  letter-spacing: 0.015em;
+  color: #fff;
   text-decoration: none;
-  letter-spacing: 0.01em;
-  min-width: 250px;
-  height: 52px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0) 45%),
+    linear-gradient(135deg, #B85A46 0%, #D97F4E 50%, #A04E3C 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.18),
+    0 1px 0 rgba(255, 255, 255, 0.4),
+    0 10px 24px -8px rgba(160, 78, 60, 0.55),
+    0 4px 10px -2px rgba(59, 47, 47, 0.15);
+  transition: transform 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.2),
+              box-shadow 0.35s ease,
+              filter 0.35s ease;
+  overflow: hidden;
+}
+
+/* Modifier for Hero section (larger size) */
+.whatsapp-cta-btn-large {
+  height: 56px;
+  padding: 0 10px 0 10px;
+  min-width: 240px;
+  font-size: 1.125rem;
+}
+.whatsapp-cta-btn-large .whatsapp-cta-icon {
+  width: 40px;
+  height: 40px;
+}
+.whatsapp-cta-btn-large .whatsapp-cta-icon svg {
+  width: 20px;
+  height: 20px;
+}
+.whatsapp-cta-btn-large .whatsapp-cta-arrow {
+  margin-right: 18px;
+}
+
+/* Icon badge — soft white circle so the glyph reads cleanly */
+.whatsapp-cta-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-}
-
-/* Hover lift and glow expansion */
-.whatsapp-cta-btn:hover {
-  transform: translateY(-2px) scale(1.02);
-  animation-play-state: paused;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #ffffff 0%, #fff1e3 100%);
+  color: #A04E3C;
   box-shadow:
-    0 0 0 4px rgba(37, 211, 102, 0.85),
-    0 8px 24px rgba(37, 211, 102, 0.45),
-    0 2px 6px rgba(0, 0, 0, 0.15);
-  border-color: rgba(255, 255, 255, 0.6);
+    inset 0 -1px 2px rgba(160, 78, 60, 0.25),
+    0 1px 2px rgba(0, 0, 0, 0.12);
+  flex-shrink: 0;
+  transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+}
+.whatsapp-cta-icon svg { width: 14px; height: 14px; }
+
+.whatsapp-cta-label {
+  padding-right: 4px;
+  white-space: nowrap;
 }
 
-/* Icon sliding behavior */
-.whatsapp-cta-btn .wa-icon-slide-container {
-  display: flex;
-  flex-direction: column;
-  height: 44px; /* 22px * 2 */
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+.whatsapp-cta-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 14px;
+  margin-right: 12px;
+  flex-shrink: 0;
+  opacity: 0;
+  transform: translateX(-8px);
+  transition: opacity 0.25s ease, transform 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.3);
 }
 
-.whatsapp-cta-btn:hover .wa-icon-slide-container {
-  transform: translateY(-22px);
+/* The SVG itself */
+.arrow-svg {
+  width: 28px;
+  height: 14px;
+  overflow: visible;
 }
 
-/* Active press */
+/* Stem: starts collapsed, draws right on hover */
+.arrow-stem {
+  stroke-dasharray: 22;
+  stroke-dashoffset: 22;
+  transition: stroke-dashoffset 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Arrowhead: starts invisible & pulled left, springs in after stem */
+.arrow-head {
+  stroke-dasharray: 20;
+  stroke-dashoffset: 20;
+  transition:
+    stroke-dashoffset 0.28s cubic-bezier(0.2, 0.9, 0.3, 1.4) 0.18s;
+}
+
+/* On hover: slide the wrapper in */
+.whatsapp-cta-btn:hover .whatsapp-cta-arrow {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Draw stem */
+.whatsapp-cta-btn:hover .arrow-stem {
+  stroke-dashoffset: 0;
+}
+
+/* Spring arrowhead in after stem */
+.whatsapp-cta-btn:hover .arrow-head {
+  stroke-dashoffset: 0;
+}
+
+/* Glow the entire arrow on hover */
+.whatsapp-cta-btn:hover .arrow-svg {
+  filter: drop-shadow(0 0 4px rgba(255, 220, 180, 0.9));
+}
+.whatsapp-cta-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    110deg,
+    transparent 25%,
+    rgba(255, 255, 255, 0.28) 50%,
+    transparent 75%
+  );
+  transform: translateX(-120%);
+  animation: zenant-btn-shimmer 3.8s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.whatsapp-cta-btn > * { position: relative; z-index: 2; }
+
+/* Hover */
+.whatsapp-cta-btn:hover {
+  transform: translateY(-2px);
+  filter: saturate(1.08);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.2),
+    0 0 0 4px rgba(217, 127, 78, 0.18),
+    0 16px 32px -10px rgba(160, 78, 60, 0.65),
+    0 6px 14px -2px rgba(59, 47, 47, 0.2);
+}
+.whatsapp-cta-btn:hover .whatsapp-cta-icon { transform: rotate(-8deg) scale(1.06); }
+.whatsapp-cta-btn:hover .whatsapp-cta-arrow { transform: translateX(0); opacity: 1; }
+
+/* Focus ring for accessibility */
+.whatsapp-cta-btn:focus-visible {
+  outline: none;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    0 0 0 3px #FEF2E2,
+    0 0 0 5px #A04E3C;
+}
+
+/* Press */
 .whatsapp-cta-btn:active {
   transform: translateY(0) scale(0.98);
   box-shadow:
-    0 2px 8px rgba(37, 211, 102, 0.3),
-    0 0 8px rgba(251, 191, 36, 0.2),
-    0 1px 2px rgba(0, 0, 0, 0.12);
+    inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.2),
+    0 4px 10px -2px rgba(160, 78, 60, 0.4);
 }
 
 /* ============================================================
