@@ -5,7 +5,7 @@ import { FloatingWhatsApp } from "./FloatingWhatsApp";
 const contacts = [
   {
     label: "For Tenants",
-    description: "Looking for a home without the deposit burden? Chat with us.",
+    description: "Hunting for a verified home in Bengaluru without the drama? Let's chat.",
     phone: "+91 80504 10310",
     whatsapp: "918050410310",
   },
