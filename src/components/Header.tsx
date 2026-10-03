@@ -64,6 +64,14 @@ export function Header() {
           </button>
           <span className="text-[#3B2F2F]/30">•</span>
           <button
+            onClick={() => handleNavigate("/explore")}
+            className="font-lora text-[#3B2F2F] hover:text-[#A04E3C] transition-colors"
+            style={{ fontSize: "1.125rem" }}
+          >
+            Explore
+          </button>
+          <span className="text-[#3B2F2F]/30">•</span>
+          <button
             onClick={() => handleNavigate("/about")}
             className="font-lora text-[#3B2F2F] hover:text-[#A04E3C] transition-colors"
             style={{ fontSize: "1.125rem" }}
@@ -137,6 +145,13 @@ export function Header() {
             style={{ fontSize: "1.125rem" }}
           >
             Home
+          </button>
+          <button
+            onClick={() => handleNavigate("/explore")}
+            className="font-lora text-[#3B2F2F] hover:text-[#A04E3C] transition-colors text-left py-3 border-b border-[#3B2F2F]/10"
+            style={{ fontSize: "1.125rem" }}
+          >
+            Explore
           </button>
           <button
             onClick={() => handleNavigate("/about")}

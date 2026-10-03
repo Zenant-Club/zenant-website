@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/api/public/:path*",
+      "destination": "https://zenant-whatsapp-26342061489.asia-south1.run.app/api/public/:path*"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
