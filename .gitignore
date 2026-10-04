@@ -33,3 +33,4 @@ pw-*.png
 Gemini_Generated_Image_*.png
 run
 build
+.claude/launch.json
