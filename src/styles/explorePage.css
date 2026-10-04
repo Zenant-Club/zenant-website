@@ -826,17 +826,6 @@
 
 .zx-book__submit { margin-top: 1.5rem; }
 
-.zx-book__note {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.35rem;
-  margin: 0.75rem 0 0;
-  font-size: 0.8125rem;
-  color: var(--zx-muted);
-}
-
-.zx-book__note svg { width: 14px; height: 14px; }
 
 /* Success */
 .zx-success {

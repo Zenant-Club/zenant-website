@@ -11,7 +11,6 @@ import {
   Clock3,
   Home,
   Images,
-  Lock,
   MapPin,
   RotateCcw,
   Search,
@@ -277,14 +276,13 @@ export function ExplorePage() {
       <section className="zx__hero">
         <div className="zx__container">
           <span className="zx__eyebrow font-lora">
-            <Sparkles /> Curated homes in Bangalore
+            <Sparkles /> Rental homes in Bengaluru
           </span>
           <h1 className="zx__title font-heading-78">
             Find your <em>next home</em>
           </h1>
           <p className="zx__lede font-lora">
-            Verified, ready-to-move apartments managed by Zenant. Browse photos, compare rents,
-            and book a free visit in under a minute.
+            Browse verified rental homes, compare rents, and schedule a visit.
           </p>
 
           {/* ── Search & Filter Bar ─────────────────────────────────── */}
@@ -403,7 +401,7 @@ export function ExplorePage() {
             </h3>
             <p className="font-lora">
               {loadFailed
-                ? "Please refresh the page in a moment, or message us on WhatsApp and we'll share options directly."
+                ? "Please refresh the page in a moment, or message us on WhatsApp."
                 : "Try a different locality or home type, or clear your filters to see everything."}
             </p>
             {loadFailed ? (
@@ -447,7 +445,7 @@ export function ExplorePage() {
 
                 <div className="zx-card__body">
                   <span className="zx-card__location font-lora">
-                    <MapPin /> {property.area || "Bangalore"}
+                    <MapPin /> {property.area || "Bengaluru"}
                   </span>
                   <h3 className="zx-card__title font-heading">{property.title}</h3>
 
@@ -571,7 +569,7 @@ export function ExplorePage() {
                     )}
 
                     <div className="zx-detail__location font-lora">
-                      <MapPin /> {selected.area || "Bangalore"}
+                      <MapPin /> {selected.area || "Bengaluru"}
                     </div>
                     <h2 className="zx-detail__title font-heading">{selected.title}</h2>
 
@@ -630,9 +628,9 @@ export function ExplorePage() {
                       </div>
                     ) : (
                       <form onSubmit={bookVisit}>
-                        <h3 className="zx-book__title font-heading">Book a free visit</h3>
+                        <h3 className="zx-book__title font-heading">Schedule a visit</h3>
                         <p className="zx-book__sub font-lora">
-                          Our community manager will show you around. No brokerage, no obligation.
+                          Pick a date and time that works for you, and our team will be in touch.
                         </p>
 
                         <div className="zx-book__step">
@@ -743,9 +741,6 @@ export function ExplorePage() {
                             : "Select a time to continue"}
                         </button>
 
-                        <p className="zx-book__note font-lora">
-                          <Lock /> We'll only use your number to confirm this visit.
-                        </p>
                       </form>
                     )}
                   </div>
