@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowRight,
   ArrowUpDown,
@@ -11,9 +11,11 @@ import {
   Clock3,
   Home,
   Images,
+  IndianRupee,
   MapPin,
   RotateCcw,
   Search,
+  SlidersHorizontal,
   Sparkles,
   User,
   X,
@@ -29,6 +31,7 @@ export type Property = {
   furnishing: string;
   image: string | null;
   imageCount: number;
+  amenities?: string[];
 };
 
 export type PropertyDetail = Property & {
@@ -43,24 +46,41 @@ const API_BASE = (
     ?.VITE_PUBLIC_API_BASE) || ""
 ).replace(/\/$/, "");
 
-const TIME_SLOTS = [
-  "10:00",
-  "10:30",
-  "11:00",
-  "11:30",
-  "12:00",
-  "12:30",
-  "14:00",
-  "14:30",
-  "15:00",
-  "15:30",
-  "16:00",
-  "16:30",
-  "17:00",
-  "17:30",
-  "18:00",
-  "18:30",
+// Every 30 minutes from 9:00 AM to 8:00 PM
+const TIME_SLOTS = Array.from({ length: 23 }, (_, i) => {
+  const minutes = 9 * 60 + i * 30;
+  return `${String(Math.floor(minutes / 60)).padStart(2, "0")}:${String(minutes % 60).padStart(2, "0")}`;
+});
+
+type BudgetOption = { id: string; label: string; min: number; max: number };
+
+const BUDGETS: BudgetOption[] = [
+  { id: "any", label: "Any budget", min: 0, max: Infinity },
+  { id: "u20", label: "Under ₹20,000", min: 0, max: 20_000 },
+  { id: "20-25", label: "₹20,000 – ₹25,000", min: 20_000, max: 25_000 },
+  { id: "25-30", label: "₹25,000 – ₹30,000", min: 25_000, max: 30_000 },
+  { id: "30-35", label: "₹30,000 – ₹35,000", min: 30_000, max: 35_000 },
+  { id: "35+", label: "₹35,000 and above", min: 35_000, max: Infinity },
 ];
+
+// Amenities offered as filters, in display order; only those present on a listed home are shown
+const AMENITY_LABELS: Record<string, string> = {
+  wifi: "Wi-Fi",
+  parking: "Parking",
+  lift: "Lift",
+  power_backup: "Power backup",
+  security: "Security",
+  cctv: "CCTV",
+  ac: "AC",
+  geyser: "Geyser",
+  washing_machine: "Washing machine",
+  refrigerator: "Refrigerator",
+  tv: "TV",
+  balcony: "Balcony",
+  wardrobe: "Wardrobe",
+  modular_kitchen: "Modular kitchen",
+  housekeeping: "Housekeeping",
+};
 
 const money = (value: number) =>
   new Intl.NumberFormat("en-IN", {
@@ -109,12 +129,17 @@ export function ExplorePage() {
   const [selectedArea, setSelectedArea] = useState("All");
   const [selectedType, setSelectedType] = useState("All");
   const [sortBy, setSortBy] = useState<SortOption>("featured");
+  const [budgetId, setBudgetId] = useState("any");
+  const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
+  const [amenitiesOpen, setAmenitiesOpen] = useState(false);
+  const amenitiesRef = useRef<HTMLDivElement>(null);
 
   // Booking Form State
   const [date, setDate] = useState(firstBookableDate);
   const [time, setTime] = useState("");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
+  const [moveInDate, setMoveInDate] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -156,6 +181,23 @@ export function ExplorePage() {
     };
   }, [dialogOpen]);
 
+  // Close the amenities menu on outside click or Escape
+  useEffect(() => {
+    if (!amenitiesOpen) return;
+    const onPointer = (e: MouseEvent) => {
+      if (!amenitiesRef.current?.contains(e.target as Node)) setAmenitiesOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setAmenitiesOpen(false);
+    };
+    document.addEventListener("mousedown", onPointer);
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onPointer);
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [amenitiesOpen]);
+
   // Compute unique areas and types for filter dropdowns
   const availableAreas = useMemo(() => {
     const set = new Set<string>();
@@ -173,12 +215,26 @@ export function ExplorePage() {
     return ["All", ...Array.from(set).sort()];
   }, [properties]);
 
+  const availableAmenities = useMemo(() => {
+    const present = new Set(properties.flatMap((p) => p.amenities || []));
+    return Object.keys(AMENITY_LABELS).filter((key) => present.has(key));
+  }, [properties]);
+
+  const toggleAmenity = (key: string) =>
+    setSelectedAmenities((prev) =>
+      prev.includes(key) ? prev.filter((a) => a !== key) : [...prev, key]
+    );
+
+  const budget = BUDGETS.find((b) => b.id === budgetId) || BUDGETS[0];
+
   // Filtered & Sorted properties
   const filteredProperties = useMemo(() => {
     return properties
       .filter((p) => {
         if (selectedArea !== "All" && p.area !== selectedArea) return false;
         if (selectedType !== "All" && p.type !== selectedType) return false;
+        if (p.rent < budget.min || p.rent >= budget.max) return false;
+        if (selectedAmenities.some((a) => !(p.amenities || []).includes(a))) return false;
         if (searchQuery.trim()) {
           const q = searchQuery.toLowerCase();
           const matchTitle = p.title.toLowerCase().includes(q);
@@ -193,7 +249,7 @@ export function ExplorePage() {
         if (sortBy === "price_desc") return b.rent - a.rent;
         return 0;
       });
-  }, [properties, selectedArea, selectedType, searchQuery, sortBy]);
+  }, [properties, selectedArea, selectedType, budget, selectedAmenities, searchQuery, sortBy]);
 
   async function openProperty(property: Property) {
     setLoadingDetail(true);
@@ -225,7 +281,7 @@ export function ExplorePage() {
 
   async function bookVisit(event: FormEvent) {
     event.preventDefault();
-    if (!selected || !time) return;
+    if (!selected || !time || !moveInDate) return;
     setSubmitting(true);
     setError(null);
     try {
@@ -238,6 +294,7 @@ export function ExplorePage() {
           phone,
           visit_date: dateKey(date),
           visit_time: time,
+          move_in_date: moveInDate,
         }),
       });
       const payload = await response.json();
@@ -259,6 +316,8 @@ export function ExplorePage() {
     setSearchQuery("");
     setSelectedArea("All");
     setSelectedType("All");
+    setBudgetId("any");
+    setSelectedAmenities([]);
     setSortBy("featured");
   };
 
@@ -266,6 +325,8 @@ export function ExplorePage() {
     searchQuery.trim() !== "" ||
     selectedArea !== "All" ||
     selectedType !== "All" ||
+    budgetId !== "any" ||
+    selectedAmenities.length > 0 ||
     sortBy !== "featured";
 
   const availableSlots = TIME_SLOTS.filter((slot) => isSlotAvailable(date, slot));
@@ -344,6 +405,65 @@ export function ExplorePage() {
             </div>
 
             <div className="zx__field">
+              <IndianRupee className="zx__fieldIcon" />
+              <select
+                className="zx__select"
+                value={budgetId}
+                onChange={(e) => setBudgetId(e.target.value)}
+                aria-label="Monthly budget"
+              >
+                {BUDGETS.map((b) => (
+                  <option key={b.id} value={b.id}>
+                    {b.label}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown className="zx__fieldChevron" />
+            </div>
+
+            <div className="zx__field zx-amenities" ref={amenitiesRef}>
+              <SlidersHorizontal className="zx__fieldIcon" />
+              <button
+                type="button"
+                className="zx__select zx-amenities__toggle"
+                onClick={() => setAmenitiesOpen((open) => !open)}
+                aria-haspopup="true"
+                aria-expanded={amenitiesOpen}
+                disabled={availableAmenities.length === 0}
+              >
+                {selectedAmenities.length === 0
+                  ? "Amenities"
+                  : selectedAmenities.length === 1
+                  ? AMENITY_LABELS[selectedAmenities[0]]
+                  : `${selectedAmenities.length} amenities`}
+              </button>
+              <ChevronDown className="zx__fieldChevron" />
+              {amenitiesOpen && (
+                <div className="zx-amenities__menu" role="group" aria-label="Amenities">
+                  {availableAmenities.map((key) => (
+                    <label key={key} className="zx-amenities__option font-lora">
+                      <input
+                        type="checkbox"
+                        checked={selectedAmenities.includes(key)}
+                        onChange={() => toggleAmenity(key)}
+                      />
+                      {AMENITY_LABELS[key]}
+                    </label>
+                  ))}
+                  {selectedAmenities.length > 0 && (
+                    <button
+                      type="button"
+                      className="zx__linkBtn zx-amenities__clear"
+                      onClick={() => setSelectedAmenities([])}
+                    >
+                      Clear amenities
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+
+            <div className="zx__field">
               <ArrowUpDown className="zx__fieldIcon" />
               <select
                 className="zx__select"
@@ -402,7 +522,7 @@ export function ExplorePage() {
             <p className="font-lora">
               {loadFailed
                 ? "Please refresh the page in a moment, or message us on WhatsApp."
-                : "Try a different locality or home type, or clear your filters to see everything."}
+                : "Try a different locality, budget or amenity, or clear your filters to see everything."}
             </p>
             {loadFailed ? (
               <button type="button" className="zx-btn" onClick={() => window.location.reload()}>
@@ -724,6 +844,21 @@ export function ExplorePage() {
                                 autoComplete="tel-national"
                               />
                             </div>
+                            <label className="zx-book__moveIn font-lora">
+                              <span>Move-in date</span>
+                              <div className="zx__field">
+                                <Home className="zx__fieldIcon" />
+                                <input
+                                  required
+                                  type="date"
+                                  className="zx__input"
+                                  value={moveInDate}
+                                  min={dateKey(new Date())}
+                                  onChange={(e) => setMoveInDate(e.target.value)}
+                                  aria-label="Move-in date"
+                                />
+                              </div>
+                            </label>
                           </div>
                         </div>
 
