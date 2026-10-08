@@ -232,8 +232,9 @@
 .zx__resultsBar {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   justify-content: space-between;
-  gap: 1rem;
+  gap: 0.75rem 1rem;
   margin: 1.75rem 0 1rem;
   font-size: 0.9375rem;
   color: var(--zx-muted);
@@ -929,10 +930,319 @@
 
 .zx-success__summary svg { width: 15px; height: 15px; color: var(--zx-accent); }
 
+/* ── Visit list (cart) ────────────────────────────────────────────── */
+
+.zx__resultsActions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-shrink: 0;
+}
+
+.zx-vl-open {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  height: 38px;
+  padding: 0 0.9rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--zx-ink);
+  background: var(--zx-surface);
+  border: 1px solid var(--zx-line-strong);
+  border-radius: 999px;
+  transition: border-color 0.15s ease;
+}
+
+.zx-vl-open:hover { border-color: var(--zx-accent); }
+.zx-vl-open svg { width: 16px; height: 16px; color: var(--zx-accent); }
+
+.zx-vl-count {
+  display: grid;
+  place-items: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 0.3rem;
+  font-size: 0.75rem;
+  color: #fff;
+  background: var(--zx-accent);
+  border-radius: 999px;
+}
+
+/* Card add-to-list toggle sits over the photo, outside the card button */
+.zx-cardWrap { position: relative; }
+.zx-cardWrap:hover .zx-card { transform: translateY(-4px); }
+
+.zx-card__save {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.35rem 0.7rem 0.35rem 0.55rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--zx-ink);
+  background: rgba(255, 250, 243, 0.95);
+  border: 0;
+  border-radius: 999px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+  transition: transform 0.25s ease, background-color 0.15s ease, color 0.15s ease;
+}
+
+.zx-cardWrap:hover .zx-card__save { transform: translateY(-4px); }
+.zx-card__save:hover { background: #fff; }
+.zx-card__save svg { width: 14px; height: 14px; }
+
+.zx-card__save--on,
+.zx-card__save--on:hover {
+  color: #fff;
+  background: var(--zx-ink);
+}
+
+.zx-card__save:focus-visible {
+  outline: 3px solid rgba(160, 78, 60, 0.45);
+  outline-offset: 2px;
+}
+
+.zx-btn--ghost {
+  color: var(--zx-ink);
+  background: transparent;
+  border: 1px solid var(--zx-line-strong);
+}
+
+.zx-btn--ghost:hover { background: var(--zx-surface); border-color: var(--zx-accent); }
+
+.zx-book__or {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 1.25rem 0 0.75rem;
+  font-size: 0.8125rem;
+  color: var(--zx-muted);
+}
+
+.zx-book__or::before,
+.zx-book__or::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--zx-line);
+}
+
+/* Sticky summary bar; leaves room for the floating WhatsApp button on the right */
+.zx-vl-bar {
+  position: fixed;
+  bottom: 24px;
+  left: 1rem;
+  right: 92px;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.5rem 0.5rem 0.5rem 1.1rem;
+  font-size: 0.875rem;
+  color: #fff;
+  background: var(--zx-ink);
+  border-radius: 999px;
+  box-shadow: 0 18px 40px -12px rgba(30, 22, 22, 0.55);
+  animation: zx-rise 0.25s ease;
+}
+
+.zx-vl-bar strong { font-weight: 700; }
+.zx-vl-bar .zx-btn { height: 40px; padding: 0 1.1rem; flex-shrink: 0; font-size: 0.875rem; }
+
+@media (min-width: 768px) {
+  .zx-vl-bar {
+    left: 50%;
+    right: auto;
+    width: min(560px, calc(100% - 2rem));
+    transform: translateX(-50%);
+    animation: zx-fade 0.25s ease;
+  }
+}
+
+/* Drawer */
+.zx-drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: flex-end;
+  background: rgba(30, 22, 22, 0.55);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  animation: zx-fade 0.2s ease;
+}
+
+.zx-drawer__panel {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 480px;
+  height: 100%;
+  background: #fff;
+  box-shadow: -20px 0 60px -20px rgba(0, 0, 0, 0.45);
+  animation: zx-slide 0.25s ease;
+}
+
+.zx-drawer__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.25rem 1.25rem 1rem;
+  border-bottom: 1px solid var(--zx-line);
+}
+
+.zx-drawer__head h2 { margin: 0; font-size: 1.375rem; color: var(--zx-ink); }
+.zx-drawer__head span { font-size: 0.8125rem; color: var(--zx-muted); }
+.zx-drawer__head .zx-modal__close { position: static; flex-shrink: 0; }
+
+.zx-drawer__form {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.zx-drawer__body {
+  flex: 1;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 1.25rem;
+}
+
+.zx-drawer__foot {
+  padding: 0.9rem 1.25rem 1.25rem;
+  border-top: 1px solid var(--zx-line);
+  background: #fff;
+}
+
+.zx-drawer__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.zx-drawer__empty h3 { margin: 0; font-size: 1.25rem; color: var(--zx-ink); }
+.zx-drawer__empty p { margin: 0.5rem 0 1.5rem; max-width: 18rem; line-height: 1.6; color: var(--zx-muted); }
+
+.zx-vl-list {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.zx-vl-item {
+  padding: 0.75rem;
+  background: var(--zx-surface);
+  border: 1px solid var(--zx-line);
+  border-radius: 14px;
+}
+
+.zx-vl-item__top {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.zx-vl-item__thumb {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 64px;
+  height: 52px;
+  color: var(--zx-muted);
+  background: #eadccb;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.zx-vl-item__thumb img { width: 100%; height: 100%; object-fit: cover; }
+.zx-vl-item__thumb svg { width: 20px; height: 20px; opacity: 0.6; }
+
+.zx-vl-item__info {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+  gap: 0.1rem;
+}
+
+.zx-vl-item__info strong {
+  overflow: hidden;
+  font-size: 0.9375rem;
+  color: var(--zx-ink);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.zx-vl-item__info > span:last-child { font-size: 0.8125rem; color: var(--zx-muted); }
+
+.zx-vl-item__remove {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  color: var(--zx-muted);
+  background: transparent;
+  border: 0;
+  border-radius: 999px;
+}
+
+.zx-vl-item__remove:hover { color: #9b2c1f; background: #fdecea; }
+.zx-vl-item__remove svg { width: 16px; height: 16px; }
+
+.zx-vl-item__when {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  margin-top: 0.65rem;
+}
+
+.zx-vl-item__when .zx__select { height: 42px; font-size: 0.875rem; }
+
+.zx-vl-results {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0 0 1.5rem;
+  padding: 0;
+  list-style: none;
+}
+
+.zx-vl-result {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  padding: 0.75rem 0.9rem;
+  font-size: 0.875rem;
+  background: var(--zx-surface);
+  border: 1px solid var(--zx-line);
+  border-radius: 12px;
+}
+
+.zx-vl-result svg { width: 18px; height: 18px; flex-shrink: 0; margin-top: 0.1rem; color: #2f7a4b; }
+.zx-vl-result--failed svg { color: #9b2c1f; }
+.zx-vl-result strong { display: block; color: var(--zx-ink); }
+.zx-vl-result span { color: var(--zx-muted); }
+
+@keyframes zx-slide { from { transform: translateX(40px); opacity: 0; } to { transform: none; opacity: 1; } }
 @keyframes zx-fade { from { opacity: 0; } to { opacity: 1; } }
 @keyframes zx-rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
 @keyframes zx-spin { to { transform: rotate(360deg); } }
 
 @media (prefers-reduced-motion: reduce) {
-  .zx *, .zx-modal, .zx-modal__panel { animation: none !important; transition: none !important; }
+  .zx *, .zx-modal, .zx-modal__panel, .zx-vl-bar, .zx-drawer, .zx-drawer__panel {
+    animation: none !important;
+    transition: none !important;
+  }
 }
