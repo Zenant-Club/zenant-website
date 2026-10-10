@@ -1,4 +1,4 @@
-import { Phone, MessageCircle } from "lucide-react";
+import { Phone, MessageCircle, MapPin } from "lucide-react";
 import { Footer } from "./Footer";
 import { FloatingWhatsApp } from "./FloatingWhatsApp";
 
@@ -15,6 +15,12 @@ const contacts = [
     phone: "+91 63613 69764",
     whatsapp: "916361369764",
   },
+];
+
+const registeredAddress = [
+  "Plot No. 41, Block 41, Ambazari",
+  "Verma Layout, Nagpur",
+  "Maharashtra – 440010",
 ];
 
 export function ContactPage() {
@@ -158,6 +164,55 @@ export function ContactPage() {
                   </a>
                 </div>
               ))}
+            </div>
+
+            {/* ── Registered Address ─────────────────────────────── */}
+            <div
+              className="bg-[#FEF2E2]"
+              style={{
+                borderRadius: "1.25rem",
+                padding: "2.5rem",
+                border: "1px solid rgba(59,47,47,0.1)",
+                maxWidth: "56rem",
+                marginTop: "2rem",
+                display: "flex",
+                flexWrap: "wrap",
+                gap: "1.5rem",
+                alignItems: "flex-start",
+              }}
+            >
+              <div
+                style={{
+                  width: "3.5rem",
+                  height: "3.5rem",
+                  flexShrink: 0,
+                  background: "rgba(160,78,60,0.12)",
+                  borderRadius: "0.875rem",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <MapPin style={{ width: "1.5rem", height: "1.5rem", color: "#A04E3C" }} />
+              </div>
+              <div>
+                <p
+                  className="font-lora text-[#A04E3C]"
+                  style={{ fontSize: "1rem", fontWeight: 600, marginBottom: "0.75rem" }}
+                >
+                  Registered Address
+                </p>
+                <address
+                  className="font-lora text-[#3B2F2F]"
+                  style={{ fontStyle: "normal", fontSize: "1.125rem", lineHeight: 1.7 }}
+                >
+                  {registeredAddress.map((line) => (
+                    <span key={line} style={{ display: "block" }}>
+                      {line}
+                    </span>
+                  ))}
+                </address>
+              </div>
             </div>
           </div>
         </section>
