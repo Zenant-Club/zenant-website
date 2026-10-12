@@ -1,48 +1,32 @@
-import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowRight,
   ArrowUpDown,
   BedDouble,
-  CalendarDays,
   Check,
-  CheckCircle2,
   ChevronDown,
   ChevronLeft,
   ChevronRight,
-  Clock3,
   Home,
   Images,
   IndianRupee,
-  ListChecks,
   MapPin,
   Plus,
   RotateCcw,
   Search,
+  ShoppingCart,
   SlidersHorizontal,
   Sparkles,
-  User,
   X,
 } from "lucide-react";
-import {
-  API_BASE,
-  MAX_VISIT_LIST,
-  Property,
-  PropertyDetail,
-  TIME_SLOTS,
-  bookingDates,
-  dateKey,
-  firstBookableDate,
-  formatSlot,
-  isSlotAvailable,
-  money,
-} from "./exploreShared";
-import { VisitListDrawer, VisitorFields } from "./VisitListDrawer";
+import { API_BASE, MAX_VISIT_LIST, Property, PropertyDetail, money } from "./exploreShared";
+import { VisitListDrawer } from "./VisitListDrawer";
 
 type SortOption = "featured" | "price_asc" | "price_desc";
 
 const VISIT_LIST_KEY = "zenant.visitList";
 
-// The visit list survives reloads; a corrupt or missing entry just starts empty
+// The cart survives reloads; a corrupt or missing entry just starts empty
 const loadVisitList = (): Property[] => {
   try {
     const stored = JSON.parse(localStorage.getItem(VISIT_LIST_KEY) || "[]");
@@ -100,22 +84,15 @@ export function ExplorePage() {
   const [amenitiesOpen, setAmenitiesOpen] = useState(false);
   const amenitiesRef = useRef<HTMLDivElement>(null);
 
-  // Booking Form State
-  const [date, setDate] = useState(firstBookableDate);
-  const [time, setTime] = useState("");
+  // Visitor details, kept here so they survive closing and reopening the cart
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [moveInDate, setMoveInDate] = useState("");
-  const [submitting, setSubmitting] = useState(false);
-  const [result, setResult] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
 
-  // Visit list: homes saved to book together, like a shopping cart
+  // Cart: the only way to book — one home or several, all checked out together
   const [visitList, setVisitList] = useState<Property[]>(loadVisitList);
   const [visitListOpen, setVisitListOpen] = useState(false);
   const [listNotice, setListNotice] = useState<string | null>(null);
-
-  const dates = useMemo(bookingDates, []);
 
   useEffect(() => {
     try {
@@ -243,7 +220,7 @@ export function ExplorePage() {
       return;
     }
     if (visitList.length >= MAX_VISIT_LIST) {
-      setListNotice(`Your visit list is full — book these ${MAX_VISIT_LIST} homes first.`);
+      setListNotice(`Your cart is full — book visits for these ${MAX_VISIT_LIST} homes first.`);
       return;
     }
     // Drop detail-only fields so the stored list stays small
@@ -252,7 +229,7 @@ export function ExplorePage() {
       ...prev,
       { id, title, area, type, rent, deposit, furnishing, image, imageCount, amenities },
     ]);
-    setListNotice("Added to your visit list");
+    setListNotice("Added to your cart");
   }
 
   const removeFromVisitList = (id: string) =>
@@ -265,11 +242,7 @@ export function ExplorePage() {
 
   async function openProperty(property: Property) {
     setLoadingDetail(true);
-    setError(null);
-    setResult(null);
     setImageIndex(0);
-    setDate(firstBookableDate());
-    setTime("");
     try {
       const response = await fetch(
         `${API_BASE}/api/public/properties/${encodeURIComponent(property.id)}`
@@ -278,7 +251,7 @@ export function ExplorePage() {
       const data = await response.json();
       setSelected(data.data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not open this property.");
+      setListNotice(err instanceof Error ? err.message : "Could not open this property.");
     } finally {
       setLoadingDetail(false);
     }
@@ -287,42 +260,6 @@ export function ExplorePage() {
   function closeDialog() {
     setSelected(null);
     setLoadingDetail(false);
-    setResult(null);
-    setError(null);
-  }
-
-  async function bookVisit(event: FormEvent) {
-    event.preventDefault();
-    if (!selected || !time || !moveInDate) return;
-    setSubmitting(true);
-    setError(null);
-    try {
-      const response = await fetch(`${API_BASE}/api/public/visits`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          property_id: selected.id,
-          name,
-          phone,
-          visit_date: dateKey(date),
-          visit_time: time,
-          move_in_date: moveInDate,
-        }),
-      });
-      const payload = await response.json();
-      if (!response.ok)
-        throw new Error(payload.error || "Could not schedule your visit. Please try again.");
-      removeFromVisitList(selected.id);
-      setResult(
-        payload.status === "already_scheduled"
-          ? "This visit is already scheduled. Our team will contact you shortly."
-          : "Your visit is confirmed! Our property manager will meet you at the scheduled time."
-      );
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not schedule your visit.");
-    } finally {
-      setSubmitting(false);
-    }
   }
 
   const resetFilters = () => {
@@ -342,9 +279,6 @@ export function ExplorePage() {
     selectedAmenities.length > 0 ||
     sortBy !== "featured";
 
-  const availableSlots = TIME_SLOTS.filter((slot) => isSlotAvailable(date, slot));
-
-  // Shared by the single-visit form and the visit list, so details are typed once
   const visitorFields = {
     name,
     phone,
@@ -366,7 +300,8 @@ export function ExplorePage() {
             Find your <em>next home</em>
           </h1>
           <p className="zx__lede font-lora">
-            Browse verified rental homes, compare rents, and schedule a visit.
+            Browse verified rental homes, add the ones you like to your cart, and book all your
+            visits in one go.
           </p>
 
           {/* ── Search & Filter Bar ─────────────────────────────────── */}
@@ -519,8 +454,13 @@ export function ExplorePage() {
                   <RotateCcw /> Reset filters
                 </button>
               )}
-              <button type="button" className="zx-vl-open" onClick={openVisitList}>
-                <ListChecks /> Visit list
+              <button
+                type="button"
+                className="zx-vl-open"
+                onClick={openVisitList}
+                aria-label={`Cart, ${visitList.length} ${visitList.length === 1 ? "home" : "homes"}`}
+              >
+                <ShoppingCart />
                 {visitList.length > 0 && <span className="zx-vl-count">{visitList.length}</span>}
               </button>
             </div>
@@ -576,18 +516,18 @@ export function ExplorePage() {
                 aria-pressed={saved}
                 aria-label={
                   saved
-                    ? `Remove ${property.title} from visit list`
-                    : `Add ${property.title} to visit list`
+                    ? `Remove ${property.title} from cart`
+                    : `Add ${property.title} to cart`
                 }
               >
-                {saved ? <Check /> : <Plus />}
-                {saved ? "In visit list" : "Visit list"}
+                {saved ? <Check /> : <ShoppingCart />}
+                {saved ? "In cart" : "Add to cart"}
               </button>
               <button
                 type="button"
                 className="zx-card"
                 onClick={() => openProperty(property)}
-                aria-label={`View ${property.title} and book a visit`}
+                aria-label={`View details of ${property.title}`}
               >
                 <div className="zx-card__media">
                   {property.image ? (
@@ -633,7 +573,7 @@ export function ExplorePage() {
                       )}
                     </div>
                     <span className="zx-card__cta">
-                      Book visit <ArrowRight />
+                      View details <ArrowRight />
                     </span>
                   </div>
                 </div>
@@ -645,7 +585,7 @@ export function ExplorePage() {
         )}
       </section>
 
-      {/* ── Property Detail & Visit Scheduler Modal ──────────────────── */}
+      {/* ── Property Detail Modal ─────────────────────────────────────── */}
       {dialogOpen && (
         <div
           className="zx-modal"
@@ -767,30 +707,40 @@ export function ExplorePage() {
                     )}
                   </div>
 
-                  {/* Right: visit booking */}
+                  {/* Right: add to cart — booking happens only at cart checkout */}
                   <div className="zx-modal__book">
-                    {result ? (
-                      <div className="zx-success">
-                        <div className="zx-success__icon">
-                          <CheckCircle2 />
-                        </div>
-                        <h3 className="font-heading">Visit requested</h3>
-                        <p className="font-lora">{result}</p>
+                    <h3 className="zx-book__title font-heading">Like this home?</h3>
+                    <p className="zx-book__sub font-lora">
+                      Add it to your cart and keep browsing. When you're ready, check out to book
+                      visits to one home or all of them in one go.
+                    </p>
 
-                        <div className="zx-success__summary font-lora">
-                          <strong>{selected.title}</strong>
-                          <div>
-                            <CalendarDays />
-                            {date.toLocaleDateString("en-IN", { dateStyle: "full" })}
-                          </div>
-                          <div>
-                            <Clock3 />
-                            {time ? formatSlot(time) : "Flexible"}
-                          </div>
-                        </div>
-
-                        <button type="button" className="zx-btn zx-btn--block" onClick={closeDialog}>
-                          Done
+                    {inVisitList(selected.id) ? (
+                      <>
+                        <button
+                          type="button"
+                          className="zx-btn zx-btn--block zx-book__submit"
+                          onClick={openVisitList}
+                        >
+                          <ShoppingCart size={16} /> Go to cart &amp; book
+                        </button>
+                        <button
+                          type="button"
+                          className="zx-btn zx-btn--ghost zx-btn--block"
+                          style={{ marginTop: "0.6rem" }}
+                          onClick={() => toggleVisitList(selected)}
+                        >
+                          <X size={16} /> Remove from cart
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <button
+                          type="button"
+                          className="zx-btn zx-btn--block zx-book__submit"
+                          onClick={() => toggleVisitList(selected)}
+                        >
+                          <Plus size={16} /> Add to cart
                         </button>
                         {visitList.length > 0 && (
                           <button
@@ -799,118 +749,15 @@ export function ExplorePage() {
                             style={{ marginTop: "0.6rem" }}
                             onClick={openVisitList}
                           >
-                            <ListChecks size={16} /> Book the {visitList.length} in your visit list
+                            <ShoppingCart size={16} /> View cart ({visitList.length})
                           </button>
                         )}
-                      </div>
-                    ) : (
-                      <form onSubmit={bookVisit}>
-                        <h3 className="zx-book__title font-heading">Schedule a visit</h3>
-                        <p className="zx-book__sub font-lora">
-                          Pick a date and time that works for you, and our team will be in touch.
-                        </p>
-
-                        <div className="zx-book__step">
-                          <div className="zx-book__label font-lora">
-                            <CalendarDays /> Pick a date
-                          </div>
-                          <div className="zx-book__dates">
-                            {dates.map((item) => {
-                              const active = dateKey(item) === dateKey(date);
-                              return (
-                                <button
-                                  type="button"
-                                  key={dateKey(item)}
-                                  onClick={() => {
-                                    setDate(item);
-                                    setTime("");
-                                  }}
-                                  className={`zx-chip zx-date${active ? " zx-chip--active" : ""}`}
-                                  aria-pressed={active}
-                                >
-                                  <span>
-                                    {item.toLocaleDateString("en-IN", { weekday: "short" })}
-                                  </span>
-                                  <strong>{item.getDate()}</strong>
-                                  <span>
-                                    {item.toLocaleDateString("en-IN", { month: "short" })}
-                                  </span>
-                                </button>
-                              );
-                            })}
-                          </div>
-                        </div>
-
-                        <div className="zx-book__step">
-                          <div className="zx-book__label font-lora">
-                            <Clock3 /> Pick a time
-                          </div>
-                          {availableSlots.length > 0 ? (
-                            <div className="zx-book__times">
-                              {availableSlots.map((slot) => {
-                                const active = time === slot;
-                                return (
-                                  <button
-                                    type="button"
-                                    key={slot}
-                                    onClick={() => setTime(slot)}
-                                    className={`zx-chip zx-time${active ? " zx-chip--active" : ""}`}
-                                    aria-pressed={active}
-                                  >
-                                    {formatSlot(slot)}
-                                  </button>
-                                );
-                              })}
-                            </div>
-                          ) : (
-                            <p className="zx-book__none font-lora">
-                              No slots left today — pick another date.
-                            </p>
-                          )}
-                        </div>
-
-                        <div className="zx-book__step">
-                          <div className="zx-book__label font-lora">
-                            <User /> Your details
-                          </div>
-                          <VisitorFields {...visitorFields} />
-                        </div>
-
-                        {error && <div className="zx-book__error font-lora">{error}</div>}
-
-                        <button
-                          type="submit"
-                          disabled={!time || submitting}
-                          className="zx-btn zx-btn--block zx-book__submit"
-                        >
-                          {submitting
-                            ? "Scheduling…"
-                            : time
-                            ? `Confirm visit · ${formatSlot(time)}`
-                            : "Select a time to continue"}
-                        </button>
-
-                        <div className="zx-book__or font-lora">
-                          <span>Seeing more than one home?</span>
-                        </div>
-                        {inVisitList(selected.id) ? (
-                          <button
-                            type="button"
-                            className="zx-btn zx-btn--ghost zx-btn--block"
-                            onClick={openVisitList}
-                          >
-                            <Check size={16} /> In your visit list · Review &amp; book
-                          </button>
-                        ) : (
-                          <button
-                            type="button"
-                            className="zx-btn zx-btn--ghost zx-btn--block"
-                            onClick={() => toggleVisitList(selected)}
-                          >
-                            <Plus size={16} /> Add to visit list
-                          </button>
-                        )}
-                      </form>
+                      </>
+                    )}
+                    {listNotice && (
+                      <p className="zx-book__sub font-lora" role="status" style={{ marginTop: "0.75rem" }}>
+                        {listNotice}
+                      </p>
                     )}
                   </div>
                 </div>
@@ -920,20 +767,20 @@ export function ExplorePage() {
         </div>
       )}
 
-      {/* ── Visit list: sticky summary bar and drawer ─────────────────── */}
+      {/* ── Cart: sticky summary bar and drawer ───────────────────────── */}
       {(visitList.length > 0 || listNotice) && !visitListOpen && !dialogOpen && (
         <div className="zx-vl-bar" role="status">
           <span className="font-lora">
             {listNotice || (
               <>
                 <strong>{visitList.length}</strong>{" "}
-                {visitList.length === 1 ? "home" : "homes"} in your visit list
+                {visitList.length === 1 ? "home" : "homes"} in your cart
               </>
             )}
           </span>
           {visitList.length > 0 && (
             <button type="button" className="zx-btn" onClick={openVisitList}>
-              Review &amp; book <ArrowRight size={16} />
+              Checkout <ArrowRight size={16} />
             </button>
           )}
         </div>

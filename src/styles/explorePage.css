@@ -781,70 +781,6 @@
 
 .zx-book__label svg { width: 14px; height: 14px; }
 
-.zx-book__dates {
-  display: flex;
-  gap: 0.5rem;
-  overflow-x: auto;
-  padding-bottom: 0.35rem;
-  scrollbar-width: thin;
-}
-
-.zx-chip {
-  border: 1px solid var(--zx-line);
-  background: var(--zx-surface);
-  color: var(--zx-ink);
-  transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;
-}
-
-.zx-chip:hover { border-color: var(--zx-accent); }
-
-.zx-chip--active,
-.zx-chip--active:hover {
-  border-color: var(--zx-ink);
-  background: var(--zx-ink);
-  color: #fff;
-}
-
-.zx-date {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  flex-shrink: 0;
-  min-width: 58px;
-  padding: 0.5rem 0.35rem;
-  border-radius: 12px;
-}
-
-.zx-date span { font-size: 0.6875rem; opacity: 0.75; }
-.zx-date strong { font-size: 1.125rem; font-weight: 700; line-height: 1.25; }
-
-.zx-book__times {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.5rem;
-}
-
-@media (min-width: 420px) {
-  .zx-book__times { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-}
-
-.zx-time {
-  height: 40px;
-  padding: 0;
-  font-size: 0.8125rem;
-  font-weight: 600;
-  border-radius: 10px;
-}
-
-.zx-book__none {
-  margin: 0;
-  padding: 0.85rem 1rem;
-  font-size: 0.875rem;
-  color: var(--zx-muted);
-  background: var(--zx-surface);
-  border-radius: 12px;
-}
-
 .zx-book__fields {
   display: grid;
   gap: 0.75rem;
@@ -907,30 +843,7 @@
 .zx-success h3 { margin: 1rem 0 0; font-size: 1.5rem; color: var(--zx-ink); }
 .zx-success p { margin: 0.5rem 0 0; max-width: 22rem; line-height: 1.6; color: var(--zx-muted); }
 
-.zx-success__summary {
-  width: 100%;
-  margin: 1.5rem 0;
-  padding: 1rem 1.1rem;
-  text-align: left;
-  font-size: 0.875rem;
-  background: var(--zx-surface);
-  border: 1px solid var(--zx-line);
-  border-radius: 14px;
-}
-
-.zx-success__summary strong { display: block; color: var(--zx-ink); }
-
-.zx-success__summary div {
-  display: flex;
-  align-items: center;
-  gap: 0.45rem;
-  margin-top: 0.45rem;
-  color: var(--zx-muted);
-}
-
-.zx-success__summary svg { width: 15px; height: 15px; color: var(--zx-accent); }
-
-/* ── Visit list (cart) ────────────────────────────────────────────── */
+/* ── Cart ────────────────────────────────────────────────────────── */
 
 .zx__resultsActions {
   display: flex;
@@ -1014,23 +927,6 @@
 }
 
 .zx-btn--ghost:hover { background: var(--zx-surface); border-color: var(--zx-accent); }
-
-.zx-book__or {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin: 1.25rem 0 0.75rem;
-  font-size: 0.8125rem;
-  color: var(--zx-muted);
-}
-
-.zx-book__or::before,
-.zx-book__or::after {
-  content: "";
-  flex: 1;
-  height: 1px;
-  background: var(--zx-line);
-}
 
 /* Sticky summary bar; leaves room for the floating WhatsApp button on the right */
 .zx-vl-bar {

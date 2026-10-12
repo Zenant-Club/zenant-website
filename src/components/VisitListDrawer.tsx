@@ -1,7 +1,6 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import {
   AlertCircle,
-  CalendarCheck,
   CalendarDays,
   CheckCircle2,
   ChevronDown,
@@ -9,6 +8,7 @@ import {
   Home,
   Images,
   MapPin,
+  ShoppingCart,
   Trash2,
   User,
   X,
@@ -36,7 +36,7 @@ type VisitorFieldsProps = {
   onMoveInDate: (value: string) => void;
 };
 
-// Name, WhatsApp number and move-in date — shared by single and multi-home booking
+// Name, WhatsApp number and move-in date for cart checkout
 export function VisitorFields({
   name,
   phone,
@@ -182,7 +182,7 @@ export function VisitListDrawer({
           throw new Error(
             `${unavailable.length === 1 ? "One home is" : `${unavailable.length} homes are`} no longer available and ${
               unavailable.length === 1 ? "was" : "were"
-            } removed from your list. Please review and book again.`
+            } removed from your cart. Please review and book again.`
           );
         }
         const culprit = snapshot.find((v) => v.property.id === payload.property_id);
@@ -224,7 +224,7 @@ export function VisitListDrawer({
       className="zx-drawer"
       role="dialog"
       aria-modal="true"
-      aria-label="Your visit list"
+      aria-label="Your cart"
       onClick={(e) => {
         if (e.target === e.currentTarget) close();
       }}
@@ -232,7 +232,7 @@ export function VisitListDrawer({
       <aside className="zx-drawer__panel">
         <header className="zx-drawer__head">
           <div>
-            <h2 className="font-heading">{results ? "Visits requested" : "Your visit list"}</h2>
+            <h2 className="font-heading">{results ? "Visits requested" : "Your cart"}</h2>
             {!results && (
               <span className="font-lora">
                 {items.length} of {MAX_VISIT_LIST} homes
@@ -253,7 +253,7 @@ export function VisitListDrawer({
               <p className="font-lora">
                 {failedCount === 0
                   ? "All set! Our property manager will contact you on WhatsApp to confirm your visits."
-                  : "Some visits couldn't be booked and are still in your list — please try those again."}
+                  : "Some visits couldn't be booked and are still in your cart — please try those again."}
               </p>
             </div>
             <ul className="zx-vl-results font-lora">
@@ -283,11 +283,11 @@ export function VisitListDrawer({
         ) : items.length === 0 ? (
           <div className="zx-drawer__body zx-drawer__empty">
             <div className="zx__emptyIcon">
-              <CalendarCheck />
+              <ShoppingCart />
             </div>
-            <h3 className="font-heading">Your visit list is empty</h3>
+            <h3 className="font-heading">Your cart is empty</h3>
             <p className="font-lora">
-              Add homes you like and book visits to all of them in one go.
+              Add homes you like to your cart, then book visits to one or all of them in one go.
             </p>
             <button type="button" className="zx-btn" onClick={close}>
               Browse homes
@@ -326,7 +326,7 @@ export function VisitListDrawer({
                           type="button"
                           className="zx-vl-item__remove"
                           onClick={() => onRemove(item.id)}
-                          aria-label={`Remove ${item.title} from visit list`}
+                          aria-label={`Remove ${item.title} from cart`}
                         >
                           <Trash2 />
                         </button>
