@@ -9,10 +9,10 @@ export const PAGE_META: Record<string, PageMeta> = {
   "/": {
     title: "Zenant | Rental Homes and Flats for Rent in Bengaluru",
     description:
-      "Find verified rental homes in South Bengaluru: HSR Layout, Koramangala, BTM Layout, Madiwala and Silk Board. Compare rents, book visits and move in with Zenant.",
+      "Find verified rental homes in Bengaluru: HSR Layout, Koramangala, BTM Layout, Madiwala and Silk Board. Compare rents, book visits and move in with Zenant.",
   },
   "/explore": {
-    title: "Flats for Rent in South Bengaluru | Zenant",
+    title: "Flats for Rent in Bengaluru | Zenant",
     description:
       "Browse rental flats in Koramangala, BTM Layout, HSR Layout, Silk Board and nearby areas. Compare rents and amenities, then schedule a visit online.",
   },
