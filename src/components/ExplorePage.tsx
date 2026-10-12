@@ -26,6 +26,9 @@ type SortOption = "featured" | "price_asc" | "price_desc";
 
 const VISIT_LIST_KEY = "zenant.visitList";
 
+// Homes requested per page; the API caps a page at 36
+const PAGE_SIZE = 36;
+
 // The cart survives reloads; a corrupt or missing entry just starts empty
 const loadVisitList = (): Property[] => {
   try {
@@ -109,14 +112,29 @@ export function ExplorePage() {
   }, [listNotice]);
 
   useEffect(() => {
-    fetch(`${API_BASE}/api/public/properties?limit=36`)
-      .then((res) => (res.ok ? res.json() : Promise.reject()))
-      .then((payload) => {
-        const fresh: Property[] = payload.data || [];
-        setProperties(fresh);
-        // Refresh saved homes with current rent/photos and drop any no longer listed
-        const byId = new Map(fresh.map((p) => [p.id, p]));
-        setVisitList((prev) => prev.flatMap((p) => byId.get(p.id) || []));
+    const loadPage = (page: number) =>
+      fetch(`${API_BASE}/api/public/properties?limit=${PAGE_SIZE}&page=${page}`).then((res) =>
+        res.ok ? res.json() : Promise.reject()
+      );
+
+    // The API returns one page of homes per request, so fetch any further pages in parallel
+    loadPage(1)
+      .then(async (first) => {
+        const perPage = first.pagination?.limit || PAGE_SIZE;
+        const pageCount = Math.ceil((first.pagination?.total || 0) / perPage);
+        const rest = await Promise.allSettled(
+          Array.from({ length: Math.max(0, pageCount - 1) }, (_, i) => loadPage(i + 2))
+        );
+        const complete = rest.every((r) => r.status === "fulfilled");
+        const loaded: Property[] = [
+          first.data || [],
+          ...rest.map((r) => (r.status === "fulfilled" ? r.value.data || [] : [])),
+        ].flat();
+        // A listing added mid-load can shift onto the next page, so keep each home once
+        const byId = new Map(loaded.map((p) => [p.id, p]));
+        setProperties([...byId.values()]);
+        // Refresh saved homes with current rent/photos; only drop missing ones when every page loaded
+        setVisitList((prev) => prev.flatMap((p) => byId.get(p.id) || (complete ? [] : [p])));
       })
       .catch(() => {
         setProperties([]);
