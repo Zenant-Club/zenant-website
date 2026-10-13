@@ -430,18 +430,34 @@
   color: var(--zx-muted);
 }
 
+/* Sits over the card's footer, outside the card button, like the cart toggle */
 .zx-card__cta {
+  position: absolute;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  z-index: 2;
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
-  flex-shrink: 0;
+  padding: 0.4rem 0.8rem;
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--zx-accent);
+  color: #fff;
+  background: var(--zx-accent);
+  border: 0;
+  border-radius: 999px;
+  transition: transform 0.25s ease, filter 0.15s ease;
 }
 
+.zx-cardWrap:hover .zx-card__cta { transform: translateY(-4px); }
+.zx-card__cta:hover { filter: brightness(1.08); }
 .zx-card__cta svg { width: 16px; height: 16px; transition: transform 0.2s ease; }
-.zx-card:hover .zx-card__cta svg { transform: translateX(3px); }
+.zx-card__cta:hover svg { transform: translateX(3px); }
+
+.zx-card__cta:focus-visible {
+  outline: 3px solid rgba(160, 78, 60, 0.45);
+  outline-offset: 2px;
+}
 
 /* Skeleton */
 .zx-skeleton { pointer-events: none; }

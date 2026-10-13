@@ -258,6 +258,15 @@ export function ExplorePage() {
     setVisitListOpen(true);
   }
 
+  // "Book a visit" goes through the cart too: add the home, then open the booking form
+  function bookNow(property: Property) {
+    if (!inVisitList(property.id)) {
+      toggleVisitList(property);
+      if (visitList.length >= MAX_VISIT_LIST) return; // cart full: the notice explains why
+    }
+    openVisitList();
+  }
+
   async function openProperty(property: Property) {
     setLoadingDetail(true);
     setImageIndex(0);
@@ -590,11 +599,16 @@ export function ExplorePage() {
                         </div>
                       )}
                     </div>
-                    <span className="zx-card__cta">
-                      View details <ArrowRight />
-                    </span>
                   </div>
                 </div>
+              </button>
+              <button
+                type="button"
+                className="zx-card__cta"
+                onClick={() => bookNow(property)}
+                aria-label={`Book a visit at ${property.title}`}
+              >
+                Book a visit <ArrowRight />
               </button>
               </div>
               );
