@@ -558,7 +558,7 @@ export function ExplorePage() {
               >
                 <div className="zx-card__media">
                   {property.image ? (
-                    <img src={property.image} alt="" loading="lazy" />
+                    <img src={property.image} alt="" loading="lazy" decoding="async" />
                   ) : (
                     <div className="zx-card__noPhoto font-lora">
                       <Images />

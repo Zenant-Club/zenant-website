@@ -351,10 +351,8 @@
 .zx-badge--photos {
   bottom: 0.75rem;
   right: 0.75rem;
-  background: rgba(30, 22, 22, 0.65);
+  background: rgba(30, 22, 22, 0.78);
   color: #fff;
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
 }
 
 .zx-card__body {
@@ -899,7 +897,8 @@
 }
 
 /* Card add-to-list toggle sits over the photo, outside the card button */
-.zx-cardWrap { position: relative; }
+/* Flex so every card fills its grid row and the Book a visit button lines up with its footer */
+.zx-cardWrap { position: relative; display: flex; }
 .zx-cardWrap:hover .zx-card { transform: translateY(-4px); }
 
 .zx-card__save {
