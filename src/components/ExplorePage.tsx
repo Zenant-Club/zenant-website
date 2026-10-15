@@ -19,7 +19,15 @@ import {
   Sparkles,
   X,
 } from "lucide-react";
-import { API_BASE, MAX_VISIT_LIST, Property, PropertyDetail, money } from "./exploreShared";
+import {
+  API_BASE,
+  MAX_VISIT_LIST,
+  Property,
+  PropertyDetail,
+  cardPhoto,
+  fallBackToOriginal,
+  money,
+} from "./exploreShared";
 import { VisitListDrawer } from "./VisitListDrawer";
 
 type SortOption = "featured" | "price_asc" | "price_desc";
@@ -242,10 +250,11 @@ export function ExplorePage() {
       return;
     }
     // Drop detail-only fields so the stored list stays small
-    const { id, title, area, type, rent, deposit, furnishing, image, imageCount, amenities } = property;
+    const { id, title, area, type, rent, deposit, furnishing, image, thumb, imageCount, amenities } =
+      property;
     setVisitList((prev) => [
       ...prev,
-      { id, title, area, type, rent, deposit, furnishing, image, imageCount, amenities },
+      { id, title, area, type, rent, deposit, furnishing, image, thumb, imageCount, amenities },
     ]);
     setListNotice("Added to your cart");
   }
@@ -558,7 +567,13 @@ export function ExplorePage() {
               >
                 <div className="zx-card__media">
                   {property.image ? (
-                    <img src={property.image} alt="" loading="lazy" decoding="async" />
+                    <img
+                      src={cardPhoto(property) || undefined}
+                      alt=""
+                      loading="lazy"
+                      decoding="async"
+                      onError={fallBackToOriginal(property)}
+                    />
                   ) : (
                     <div className="zx-card__noPhoto font-lora">
                       <Images />

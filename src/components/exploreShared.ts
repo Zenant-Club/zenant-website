@@ -9,6 +9,8 @@ export type Property = {
   deposit: number;
   furnishing: string;
   image: string | null;
+  // Card-sized copy of `image` served by the API; absent from older API responses
+  thumb?: string | null;
   imageCount: number;
   amenities?: string[];
 };
@@ -22,6 +24,16 @@ export const API_BASE = (
   ((import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
     ?.VITE_PUBLIC_API_BASE) || ""
 ).replace(/\/$/, "");
+
+// The small cover photo for cards and the cart. Catalogue originals are full camera
+// size (often 4032x3024, over 1 MB), which made the property grid slow to scroll.
+export const cardPhoto = (p: Property) => (p.thumb ? `${API_BASE}${p.thumb}` : p.image);
+
+// If the resized copy can't load, show the full-size original rather than a broken photo
+export const fallBackToOriginal =
+  (p: Property) => (e: { currentTarget: HTMLImageElement }) => {
+    if (p.image && e.currentTarget.src !== p.image) e.currentTarget.src = p.image;
+  };
 
 // Matches MAX_VISITS_PER_BOOKING in the booking API
 export const MAX_VISIT_LIST = 10;

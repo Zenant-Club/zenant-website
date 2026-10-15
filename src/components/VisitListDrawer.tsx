@@ -19,7 +19,9 @@ import {
   Property,
   TIME_SLOTS,
   bookingDates,
+  cardPhoto,
   dateKey,
+  fallBackToOriginal,
   firstBookableDate,
   formatSlot,
   fromDateKey,
@@ -313,7 +315,15 @@ export function VisitListDrawer({
                     <li key={item.id} className="zx-vl-item">
                       <div className="zx-vl-item__top">
                         <div className="zx-vl-item__thumb">
-                          {item.image ? <img src={item.image} alt="" /> : <Images />}
+                          {item.image ? (
+                            <img
+                              src={cardPhoto(item) || undefined}
+                              alt=""
+                              onError={fallBackToOriginal(item)}
+                            />
+                          ) : (
+                            <Images />
+                          )}
                         </div>
                         <div className="zx-vl-item__info">
                           <span className="zx-card__location font-lora">
