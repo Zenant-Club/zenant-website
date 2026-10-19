@@ -44,6 +44,11 @@ export function Footer() {
                 </a>
               </li>
               <li>
+                <a href="/explore" className="hover:text-[#A04E3C] transition-colors">
+                  Explore Properties
+                </a>
+              </li>
+              <li>
                 <a href="/about" className="hover:text-[#A04E3C] transition-colors">
                   About
                 </a>

@@ -47,7 +47,7 @@ export function Header() {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-[#FEF2E2]/95 backdrop-blur-sm shadow-sm">
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-12 py-4 flex items-center justify-between gap-3">
+      <div className="max-w-[1440px] mx-auto px-6 lg:px-12 py-4 flex items-center justify-between gap-3">
         {/* Logo */}
         <button onClick={() => navigate("/")} className="flex items-center gap-3">
           <img src="/logo.png" alt="Zenant Logo" className="h-8 sm:h-10 w-auto object-contain" />
