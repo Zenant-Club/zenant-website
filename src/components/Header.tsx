@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { CalendarDays, Menu, X } from "lucide-react";
+import { CalendarDays, House, Menu, X } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
 export function Header() {
@@ -47,10 +47,10 @@ export function Header() {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-[#FEF2E2]/95 backdrop-blur-sm shadow-sm">
-      <div className="max-w-[1440px] mx-auto px-6 lg:px-12 py-4 flex items-center justify-between">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-12 py-4 flex items-center justify-between gap-3">
         {/* Logo */}
         <button onClick={() => navigate("/")} className="flex items-center gap-3">
-          <img src="/logo.png" alt="Zenant Logo" className="h-10 w-auto object-contain" />
+          <img src="/logo.png" alt="Zenant Logo" className="h-8 sm:h-10 w-auto object-contain" />
         </button>
 
         {/* Desktop Navigation */}
@@ -113,18 +113,33 @@ export function Header() {
           </span>
         </Link>
 
-        {/* Mobile Hamburger Button */}
-        <button
-          className="md:hidden flex items-center justify-center w-10 h-10 rounded-full hover:bg-[#3B2F2F]/10 transition-colors"
-          onClick={() => setMenuOpen(!menuOpen)}
-          aria-label={menuOpen ? "Close menu" : "Open menu"}
-        >
-          {menuOpen ? (
-            <X className="w-6 h-6 text-[#3B2F2F]" />
-          ) : (
-            <Menu className="w-6 h-6 text-[#3B2F2F]" />
+        {/* Mobile: always-visible Explore CTA + Hamburger */}
+        <div className="md:hidden flex items-center gap-2">
+          {location.pathname !== "/explore" && (
+            <Link
+              to="/explore"
+              className="inline-flex whatsapp-cta-btn"
+              style={{ minWidth: "unset", height: "38px", padding: "0 14px 0 5px", fontSize: "0.8125rem" }}
+              onClick={() => setMenuOpen(false)}
+            >
+              <span className="whatsapp-cta-icon">
+                <House aria-hidden="true" />
+              </span>
+              <span className="whatsapp-cta-label">Explore Homes</span>
+            </Link>
           )}
-        </button>
+          <button
+            className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-[#3B2F2F]/10 transition-colors"
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-label={menuOpen ? "Close menu" : "Open menu"}
+          >
+            {menuOpen ? (
+              <X className="w-6 h-6 text-[#3B2F2F]" />
+            ) : (
+              <Menu className="w-6 h-6 text-[#3B2F2F]" />
+            )}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Slide-Down Menu */}
