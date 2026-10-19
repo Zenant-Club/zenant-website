@@ -1,4 +1,4 @@
-import { Linkedin, Instagram } from "lucide-react";
+import { Linkedin, Instagram, Facebook } from "lucide-react";
 import { Link } from "react-router-dom";
 import { IN_TAGS, NEAR_TAGS } from "./searchTags";
 
@@ -80,6 +80,14 @@ export function Footer() {
                 className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-[#A04E3C] transition-colors"
               >
                 <Instagram className="w-5 h-5" />
+              </a>
+              <a
+                href="https://www.facebook.com/people/Zenantclub/61573986855336/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-[#A04E3C] transition-colors"
+              >
+                <Facebook className="w-5 h-5" />
               </a>
             </div>
             <p className="font-lora text-white/70 text-sm">
