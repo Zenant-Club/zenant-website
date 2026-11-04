@@ -33,4 +33,5 @@ pw-*.png
 Gemini_Generated_Image_*.png
 run
 build
+build-ssr
 .claude/launch.json

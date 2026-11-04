@@ -1,9 +1,18 @@
-import { useState, useEffect } from "react";
+import { Fragment, useState, useEffect } from "react";
 import { CalendarDays, House, Menu, X } from "lucide-react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+
+// Real links rather than buttons, so search engines can follow the menu to every page.
+// "/#home" scrolls to the top of the homepage (see ScrollToHash in App.tsx).
+const NAV_LINKS = [
+  { label: "Home", to: "/#home" },
+  { label: "Explore", to: "/explore" },
+  { label: "About", to: "/about" },
+  { label: "Contact", to: "/contact" },
+  { label: "Careers", to: "/careers" },
+];
 
 export function Header() {
-  const navigate = useNavigate();
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -24,76 +33,28 @@ export function Header() {
     };
   }, [menuOpen]);
 
-  const scrollToSection = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
-    }
-  };
-
-  const handleSectionNavigation = (id: string) => {
-    setMenuOpen(false);
-    if (location.pathname === "/") {
-      scrollToSection(id);
-      return;
-    }
-    navigate(`/#${id}`);
-  };
-
-  const handleNavigate = (path: string) => {
-    setMenuOpen(false);
-    navigate(path);
-  };
-
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-[#FEF2E2]/95 backdrop-blur-sm shadow-sm">
       <div className="max-w-[1440px] mx-auto px-6 lg:px-12 py-4 flex items-center justify-between gap-3">
         {/* Logo */}
-        <button onClick={() => navigate("/")} className="flex items-center gap-3">
+        <Link to="/" className="flex items-center gap-3">
           <img src="/logo.png" alt="Zenant Logo" className="h-8 sm:h-10 w-auto object-contain" />
-        </button>
+        </Link>
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-8">
-          <button
-            onClick={() => handleSectionNavigation("home")}
-            className="font-lora text-[#3B2F2F] hover:text-[#A04E3C] transition-colors"
-            style={{ fontSize: "1.125rem" }}
-          >
-            Home
-          </button>
-          <span className="text-[#3B2F2F]/30">•</span>
-          <button
-            onClick={() => handleNavigate("/explore")}
-            className="font-lora text-[#3B2F2F] hover:text-[#A04E3C] transition-colors"
-            style={{ fontSize: "1.125rem" }}
-          >
-            Explore
-          </button>
-          <span className="text-[#3B2F2F]/30">•</span>
-          <button
-            onClick={() => handleNavigate("/about")}
-            className="font-lora text-[#3B2F2F] hover:text-[#A04E3C] transition-colors"
-            style={{ fontSize: "1.125rem" }}
-          >
-            About
-          </button>
-          <span className="text-[#3B2F2F]/30">•</span>
-          <button
-            onClick={() => handleNavigate("/contact")}
-            className="font-lora text-[#3B2F2F] hover:text-[#A04E3C] transition-colors"
-            style={{ fontSize: "1.125rem" }}
-          >
-            Contact
-          </button>
-          <span className="text-[#3B2F2F]/30">•</span>
-          <button
-            onClick={() => handleNavigate("/careers")}
-            className="font-lora text-[#3B2F2F] hover:text-[#A04E3C] transition-colors"
-            style={{ fontSize: "1.125rem" }}
-          >
-            Careers
-          </button>
+          {NAV_LINKS.map(({ label, to }, index) => (
+            <Fragment key={to}>
+              {index > 0 && <span className="text-[#3B2F2F]/30">•</span>}
+              <Link
+                to={to}
+                className="font-lora text-[#3B2F2F] hover:text-[#A04E3C] transition-colors"
+                style={{ fontSize: "1.125rem" }}
+              >
+                {label}
+              </Link>
+            </Fragment>
+          ))}
         </nav>
 
         {/* Desktop CTA */}
@@ -150,41 +111,17 @@ export function Header() {
         style={{ background: "#FEF2E2", borderTop: menuOpen ? "1px solid rgba(59,47,47,0.1)" : "none" }}
       >
         <nav className="flex flex-col px-6 py-4 gap-1">
-          <button
-            onClick={() => handleSectionNavigation("home")}
-            className="font-lora text-[#3B2F2F] hover:text-[#A04E3C] transition-colors text-left py-3 border-b border-[#3B2F2F]/10"
-            style={{ fontSize: "1.125rem" }}
-          >
-            Home
-          </button>
-          <button
-            onClick={() => handleNavigate("/explore")}
-            className="font-lora text-[#3B2F2F] hover:text-[#A04E3C] transition-colors text-left py-3 border-b border-[#3B2F2F]/10"
-            style={{ fontSize: "1.125rem" }}
-          >
-            Explore
-          </button>
-          <button
-            onClick={() => handleNavigate("/about")}
-            className="font-lora text-[#3B2F2F] hover:text-[#A04E3C] transition-colors text-left py-3 border-b border-[#3B2F2F]/10"
-            style={{ fontSize: "1.125rem" }}
-          >
-            About
-          </button>
-          <button
-            onClick={() => handleNavigate("/contact")}
-            className="font-lora text-[#3B2F2F] hover:text-[#A04E3C] transition-colors text-left py-3 border-b border-[#3B2F2F]/10"
-            style={{ fontSize: "1.125rem" }}
-          >
-            Contact
-          </button>
-          <button
-            onClick={() => handleNavigate("/careers")}
-            className="font-lora text-[#3B2F2F] hover:text-[#A04E3C] transition-colors text-left py-3 border-b border-[#3B2F2F]/10"
-            style={{ fontSize: "1.125rem" }}
-          >
-            Careers
-          </button>
+          {NAV_LINKS.map(({ label, to }) => (
+            <Link
+              key={to}
+              to={to}
+              onClick={() => setMenuOpen(false)}
+              className="font-lora text-[#3B2F2F] hover:text-[#A04E3C] transition-colors text-left py-3 border-b border-[#3B2F2F]/10"
+              style={{ fontSize: "1.125rem" }}
+            >
+              {label}
+            </Link>
+          ))}
           <Link
             to="/explore"
             className="mt-3 inline-flex whatsapp-cta-btn group"

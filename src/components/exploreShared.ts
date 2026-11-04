@@ -20,6 +20,39 @@ export type PropertyDetail = Property & {
   description: string;
 };
 
+// Homes the build baked into the page (scripts/prerender.mjs), so visitors and search engines see
+// listings straight away. The Explore page still refreshes them from the API after it loads.
+export const LISTINGS_SCRIPT_ID = "zenant-listings";
+
+let buildListings: Property[] | null = null;
+let pageListings: Property[] | null | undefined;
+
+// Called by the build before rendering a page
+export const setBuildListings = (listings: Property[] | null) => {
+  buildListings = listings;
+};
+
+export function prerenderedListings(): Property[] | null {
+  if (typeof document === "undefined") return buildListings;
+  if (pageListings === undefined) {
+    try {
+      const parsed = JSON.parse(document.getElementById(LISTINGS_SCRIPT_ID)?.textContent || "null");
+      pageListings = Array.isArray(parsed) ? parsed : null;
+    } catch {
+      pageListings = null;
+    }
+  }
+  return pageListings;
+}
+
+let fetchedListings: Property[] | null = null;
+
+// The latest homes this visit has seen: from the API once fetched, else those baked into the page
+export const rememberListings = (listings: Property[]) => {
+  fetchedListings = listings;
+};
+export const knownListings = () => fetchedListings || prerenderedListings();
+
 export const API_BASE = (
   ((import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
     ?.VITE_PUBLIC_API_BASE) || ""

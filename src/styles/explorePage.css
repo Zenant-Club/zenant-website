@@ -67,6 +67,26 @@
 
 .zx__eyebrow svg { width: 14px; height: 14px; }
 
+/* Breadcrumbs, in place of the eyebrow on area and budget pages */
+.zx-crumbs ol {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--zx-muted);
+}
+
+.zx-crumbs li + li::before { content: "›"; margin-right: 0.5rem; color: var(--zx-line-strong); }
+.zx-crumbs a { color: var(--zx-accent); }
+.zx-crumbs a:hover { text-decoration: underline; }
+
 .zx__title {
   margin: 0.75rem 0 0;
   font-size: clamp(2.25rem, 6vw, 4rem);
@@ -86,6 +106,16 @@
   line-height: 1.6;
   color: var(--zx-muted);
 }
+
+/* Neighbourhood names in an area intro link to their own pages */
+.zx__lede a {
+  color: var(--zx-accent);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+.zx__lede a:hover { color: var(--zx-accent-dark); }
 
 /* ── Filter bar ───────────────────────────────────────────────────── */
 
@@ -256,6 +286,9 @@
 
 .zx__linkBtn:hover { text-decoration: underline; }
 .zx__linkBtn svg { width: 14px; height: 14px; }
+
+/* "See all homes" under an area page's intro */
+.zx__allHomes { margin-top: 1rem; }
 
 /* ── Grid & cards ─────────────────────────────────────────────────── */
 
@@ -1145,6 +1178,112 @@
 .zx-vl-result--failed svg { color: #9b2c1f; }
 .zx-vl-result strong { display: block; color: var(--zx-ink); }
 .zx-vl-result span { color: var(--zx-muted); }
+
+/* ── Rent table ───────────────────────────────────────────────────── */
+
+.zx-rents {
+  margin-top: 3.5rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--zx-line);
+}
+
+.zx-rents__title {
+  margin: 0;
+  font-size: 1.375rem;
+  font-weight: 600;
+  color: var(--zx-ink);
+}
+
+.zx-rents__note {
+  margin: 0.4rem 0 1rem;
+  font-size: 0.9375rem;
+  color: var(--zx-muted);
+}
+
+.zx-rents__table {
+  width: 100%;
+  max-width: 48rem;
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow: hidden;
+  font-size: 0.8125rem;
+  background: var(--zx-surface);
+  border: 1px solid var(--zx-line);
+  border-radius: 14px;
+}
+
+.zx-rents__table th,
+.zx-rents__table td {
+  padding: 0.6rem;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--zx-line);
+}
+
+.zx-rents__table tbody tr:last-child td { border-bottom: 0; }
+
+.zx-rents__table th {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--zx-muted);
+}
+
+.zx-rents__table td { color: var(--zx-ink); }
+.zx-rents__table td small { display: block; margin-top: 0.15rem; font-size: 0.75rem; color: var(--zx-muted); }
+
+@media (min-width: 640px) {
+  .zx-rents__table { font-size: 0.9375rem; }
+  .zx-rents__table th,
+  .zx-rents__table td { padding: 0.75rem 1rem; }
+  .zx-rents__table th { font-size: 0.75rem; }
+}
+
+/* ── Browse by area ───────────────────────────────────────────────── */
+
+.zx-areas {
+  margin-top: 3.5rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--zx-line);
+}
+
+.zx-areas__title {
+  margin: 0 0 1rem;
+  font-size: 1.375rem;
+  font-weight: 600;
+  color: var(--zx-ink);
+}
+
+.zx-areas__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Fallback colours let the homepage use these chips outside .zx */
+.zx-areas__list a {
+  display: inline-block;
+  padding: 0.45rem 0.9rem;
+  font-size: 0.875rem;
+  color: var(--zx-ink, #3b2f2f);
+  background: var(--zx-surface, #fffaf3);
+  border: 1px solid var(--zx-line, rgba(59, 47, 47, 0.12));
+  border-radius: 999px;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.zx-areas__list a:hover {
+  border-color: var(--zx-accent, #a04e3c);
+  color: var(--zx-accent, #a04e3c);
+}
+
+.zx-areas__list--home { justify-content: center; }
+.zx-areas__list--home a { padding: 0.6rem 1.1rem; font-size: 1rem; }
+.zx-areas__list--group { margin-bottom: 2rem; }
 
 @keyframes zx-slide { from { transform: translateX(40px); opacity: 0; } to { transform: none; opacity: 1; } }
 @keyframes zx-fade { from { opacity: 0; } to { opacity: 1; } }

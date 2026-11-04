@@ -1,5 +1,9 @@
 // Title and description for each route, for search results and link previews.
 // Keep titles under ~60 characters and descriptions under ~160.
+// Every route listed here is prerendered and goes in the sitemap (scripts/prerender.mjs), along
+// with the budget pages the current homes justify.
+
+import { RENT_PAGES, findRentPage, rentPath } from "./rentPages";
 
 export const SITE_URL = "https://www.zenant.club";
 
@@ -31,4 +35,20 @@ export const PAGE_META: Record<string, PageMeta> = {
     description:
       "Join Zenant and help build a tenant-first rental experience in Bengaluru. See open roles and how to apply.",
   },
+  ...Object.fromEntries(
+    RENT_PAGES.map((page) => [rentPath(page), { title: page.title, description: page.description }])
+  ),
+};
+
+// Budget pages depend on the homes listed, so they're looked up rather than listed above
+export function pageMetaFor(path: string): PageMeta | undefined {
+  if (PAGE_META[path]) return PAGE_META[path];
+  const page = path.startsWith("/rent/") ? findRentPage(path.slice("/rent/".length)) : undefined;
+  return page && { title: page.title, description: page.description };
+}
+
+// For any path not listed above; such pages are also kept out of search
+export const NOT_FOUND_META: PageMeta = {
+  title: "Page not found | Zenant",
+  description: PAGE_META["/"].description,
 };

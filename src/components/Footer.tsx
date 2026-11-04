@@ -1,23 +1,6 @@
 import { Linkedin, Instagram, Facebook } from "lucide-react";
 import { Link } from "react-router-dom";
-import { IN_TAGS, NEAR_TAGS } from "./searchTags";
-
-function TagGroup({ title, tags }: { title: string; tags: string[] }) {
-  return (
-    <div>
-      <h4 className="footer-tags__title font-lora text-sm">{title}</h4>
-      <ul className="footer-tags font-lora text-sm text-white/60">
-        {tags.map((tag) => (
-          <li key={tag}>
-            <Link to="/explore" className="hover:text-white transition-colors">
-              {title} {tag}
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
+import { RENT_PAGES, rentLabel, rentPath } from "./rentPages";
 
 export function Footer() {
   return (
@@ -104,8 +87,15 @@ export function Footer() {
         {/* Popular searches */}
         <div className="border-t border-white/10 pt-8 mb-8 space-y-6">
           <h3 className="font-heading text-lg">Popular searches</h3>
-          <TagGroup title="Flats for rent in" tags={IN_TAGS} />
-          <TagGroup title="Flats for rent near" tags={NEAR_TAGS} />
+          <ul className="footer-tags font-lora text-sm text-white/60">
+            {RENT_PAGES.map((page) => (
+              <li key={page.slug}>
+                <Link to={rentPath(page)} className="hover:text-white transition-colors">
+                  {rentLabel(page)}
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
 
         {/* Bottom Bar */}

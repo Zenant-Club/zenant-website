@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import {
   ArrowRight,
   ArrowUpDown,
@@ -27,7 +28,21 @@ import {
   cardPhoto,
   fallBackToOriginal,
   money,
+  prerenderedListings,
+  rememberListings,
 } from "./exploreShared";
+import {
+  CITY_PAGE,
+  RENT_PAGES,
+  RentPage,
+  budgetPagesFor,
+  isInRentPage,
+  linkPlaces,
+  rentBreadcrumbs,
+  rentLabel,
+  rentPath,
+  rentTableHeading,
+} from "./rentPages";
 import { VisitListDrawer } from "./VisitListDrawer";
 
 type SortOption = "featured" | "price_asc" | "price_desc";
@@ -77,9 +92,56 @@ const AMENITY_LABELS: Record<string, string> = {
   housekeeping: "Housekeeping",
 };
 
-export function ExplorePage() {
-  const [properties, setProperties] = useState<Property[]>([]);
-  const [loading, setLoading] = useState(true);
+// "We have 13 homes here right now (1BHK, 2BHK), with rents from ₹22,999 to ₹34,999 a month."
+function homesSummary(homes: Property[], page: RentPage) {
+  const types = page.type ? [] : [...new Set(homes.map((h) => h.type).filter(Boolean))].sort();
+  const rents = homes.map((h) => h.rent).filter((rent) => rent > 0);
+  let summary = `We have ${homes.length} ${homes.length === 1 ? "home" : "homes"} here right now`;
+  if (types.length > 0) summary += ` (${types.join(", ")})`;
+  if (rents.length > 0) {
+    const low = Math.min(...rents);
+    const high = Math.max(...rents);
+    summary +=
+      low === high
+        ? `, at ${money(low)} a month`
+        : `, with rents from ${money(low)} to ${money(high)} a month`;
+  }
+  return `${summary}.`;
+}
+
+const median = (values: number[]) => {
+  const sorted = [...values].sort((a, b) => a - b);
+  const mid = Math.floor(sorted.length / 2);
+  return sorted.length % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+};
+
+// Per home type: rent range, median rent, and median deposit in months of rent (to the nearest half)
+function rentsByType(homes: Property[]) {
+  const byType = new Map<string, Property[]>();
+  homes
+    .filter((h) => h.rent > 0)
+    .forEach((h) => byType.set(h.type || "Other", [...(byType.get(h.type || "Other") || []), h]));
+  return [...byType.entries()]
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([type, group]) => {
+      const rents = group.map((h) => h.rent);
+      const depositRatios = group.filter((h) => h.deposit > 0).map((h) => h.deposit / h.rent);
+      return {
+        type,
+        count: group.length,
+        low: Math.min(...rents),
+        high: Math.max(...rents),
+        typical: median(rents),
+        depositMonths: depositRatios.length ? Math.round(median(depositRatios) * 2) / 2 : null,
+      };
+    });
+}
+
+// With `page`, shows only that page's homes under its own heading (see rentPages.ts)
+export function ExplorePage({ page }: { page?: RentPage }) {
+  // Homes baked into the page at build time show straight away; the API then refreshes them
+  const [properties, setProperties] = useState<Property[]>(() => prerenderedListings() || []);
+  const [loading, setLoading] = useState(() => !prerenderedListings());
   const [loadFailed, setLoadFailed] = useState(false);
   const [selected, setSelected] = useState<PropertyDetail | null>(null);
   const [loadingDetail, setLoadingDetail] = useState(false);
@@ -100,12 +162,23 @@ export function ExplorePage() {
   const [phone, setPhone] = useState("");
   const [moveInDate, setMoveInDate] = useState("");
 
-  // Cart: the only way to book — one home or several, all checked out together
-  const [visitList, setVisitList] = useState<Property[]>(loadVisitList);
+  // Cart: the only way to book — one home or several, all checked out together.
+  // Restored from storage after the first render, so that render matches the prerendered page.
+  const [visitList, setVisitList] = useState<Property[]>([]);
+  const visitListRestored = useRef(false);
   const [visitListOpen, setVisitListOpen] = useState(false);
   const [listNotice, setListNotice] = useState<string | null>(null);
 
   useEffect(() => {
+    setVisitList(loadVisitList());
+  }, []);
+
+  useEffect(() => {
+    // The first run sees the empty starting list; saving it would wipe the stored cart
+    if (!visitListRestored.current) {
+      visitListRestored.current = true;
+      return;
+    }
     try {
       localStorage.setItem(VISIT_LIST_KEY, JSON.stringify(visitList));
     } catch {
@@ -141,10 +214,12 @@ export function ExplorePage() {
         // A listing added mid-load can shift onto the next page, so keep each home once
         const byId = new Map(loaded.map((p) => [p.id, p]));
         setProperties([...byId.values()]);
+        rememberListings([...byId.values()]);
         // Refresh saved homes with current rent/photos; only drop missing ones when every page loaded
         setVisitList((prev) => prev.flatMap((p) => byId.get(p.id) || (complete ? [] : [p])));
       })
       .catch(() => {
+        if (prerenderedListings()) return; // keep showing the homes from the build
         setProperties([]);
         setLoadFailed(true);
       })
@@ -185,27 +260,43 @@ export function ExplorePage() {
     };
   }, [amenitiesOpen]);
 
+  // On an area page, only that area's homes; the filters below narrow these further
+  const pageHomes = useMemo(
+    () => (page ? properties.filter((p) => isInRentPage(page, p)) : properties),
+    [page, properties]
+  );
+
+  // Budget pages of this page (or of the page this one narrows), as links to the others
+  const budgetBase = page?.base || page || CITY_PAGE;
+  const budgetLinks = useMemo(
+    () =>
+      budgetPagesFor(properties).filter(
+        (other) => other.base?.slug === budgetBase.slug && other.slug !== page?.slug
+      ),
+    [budgetBase, page, properties]
+  );
+
   // Compute unique areas and types for filter dropdowns
   const availableAreas = useMemo(() => {
     const set = new Set<string>();
-    properties.forEach((p) => {
+    pageHomes.forEach((p) => {
       if (p.area) set.add(p.area);
     });
     return ["All", ...Array.from(set).sort()];
-  }, [properties]);
+  }, [pageHomes]);
 
   const availableTypes = useMemo(() => {
     const set = new Set<string>();
-    properties.forEach((p) => {
+    pageHomes.forEach((p) => {
       if (p.type) set.add(p.type);
     });
     return ["All", ...Array.from(set).sort()];
-  }, [properties]);
+  }, [pageHomes]);
 
   const availableAmenities = useMemo(() => {
-    const present = new Set(properties.flatMap((p) => p.amenities || []));
+    const present = new Set(pageHomes.flatMap((p) => p.amenities || []));
     return Object.keys(AMENITY_LABELS).filter((key) => present.has(key));
-  }, [properties]);
+  }, [pageHomes]);
 
   const toggleAmenity = (key: string) =>
     setSelectedAmenities((prev) =>
@@ -216,7 +307,7 @@ export function ExplorePage() {
 
   // Filtered & Sorted properties
   const filteredProperties = useMemo(() => {
-    return properties
+    return pageHomes
       .filter((p) => {
         if (selectedArea !== "All" && p.area !== selectedArea) return false;
         if (selectedType !== "All" && p.type !== selectedType) return false;
@@ -236,7 +327,7 @@ export function ExplorePage() {
         if (sortBy === "price_desc") return b.rent - a.rent;
         return 0;
       });
-  }, [properties, selectedArea, selectedType, budget, selectedAmenities, searchQuery, sortBy]);
+  }, [pageHomes, selectedArea, selectedType, budget, selectedAmenities, searchQuery, sortBy]);
 
   const inVisitList = (id: string) => visitList.some((p) => p.id === id);
 
@@ -329,16 +420,59 @@ export function ExplorePage() {
       {/* ── Hero ─────────────────────────────────────────────────────── */}
       <section className="zx__hero">
         <div className="zx__container">
-          <span className="zx__eyebrow font-lora">
-            <Sparkles /> Rental homes in Bengaluru
-          </span>
-          <h1 className="zx__title font-heading-78">
-            Find your <em>next home</em>
-          </h1>
-          <p className="zx__lede font-lora">
-            Browse verified rental homes, add the ones you like to your cart, and book all your
-            visits in one go.
-          </p>
+          {page ? (
+            <nav className="zx-crumbs font-lora" aria-label="Breadcrumb">
+              <ol>
+                {rentBreadcrumbs(page).map((crumb, index, trail) => (
+                  <li key={crumb.path}>
+                    {index < trail.length - 1 ? (
+                      <Link to={crumb.path}>{crumb.label}</Link>
+                    ) : (
+                      <span aria-current="page">{crumb.label}</span>
+                    )}
+                  </li>
+                ))}
+              </ol>
+            </nav>
+          ) : (
+            <span className="zx__eyebrow font-lora">
+              <Sparkles /> Rental homes in Bengaluru
+            </span>
+          )}
+          {page ? (
+            <>
+              <h1 className="zx__title font-heading-78">
+                {page.lead} <em>{page.place}</em>
+              </h1>
+              <p className="zx__lede font-lora">
+                {linkPlaces(page.intro, page).map((part, index) =>
+                  typeof part === "string" ? (
+                    part
+                  ) : (
+                    <Link key={index} to={part.path}>
+                      {part.text}
+                    </Link>
+                  )
+                )}
+              </p>
+              {!loading && pageHomes.length > 0 && (
+                <p className="zx__lede font-lora">{homesSummary(pageHomes, page)}</p>
+              )}
+              <Link to="/explore" className="zx__linkBtn zx__allHomes font-lora">
+                See all homes in Bengaluru <ArrowRight />
+              </Link>
+            </>
+          ) : (
+            <>
+              <h1 className="zx__title font-heading-78">
+                Find your <em>next home</em>
+              </h1>
+              <p className="zx__lede font-lora">
+                Browse verified rental homes, add the ones you like to your cart, and book all your
+                visits in one go.
+              </p>
+            </>
+          )}
 
           {/* ── Search & Filter Bar ─────────────────────────────────── */}
           <div className="zx__filters">
@@ -522,17 +656,27 @@ export function ExplorePage() {
               <Home />
             </div>
             <h3 className="font-heading">
-              {loadFailed ? "Couldn't load homes right now" : "No homes match these filters"}
+              {loadFailed
+                ? "Couldn't load homes right now"
+                : page && pageHomes.length === 0
+                ? `No ${rentLabel(page).replace(/^F/, "f")} right now`
+                : "No homes match these filters"}
             </h3>
             <p className="font-lora">
               {loadFailed
                 ? "Please refresh the page in a moment, or message us on WhatsApp."
+                : page && pageHomes.length === 0
+                ? "Take a look at all our homes in Bengaluru instead."
                 : "Try a different locality, budget or amenity, or clear your filters to see everything."}
             </p>
             {loadFailed ? (
               <button type="button" className="zx-btn" onClick={() => window.location.reload()}>
                 <RotateCcw size={16} /> Try again
               </button>
+            ) : page && pageHomes.length === 0 ? (
+              <Link to="/explore" className="zx-btn">
+                See all homes
+              </Link>
             ) : (
               <button type="button" className="zx-btn" onClick={resetFilters}>
                 Show all homes
@@ -630,6 +774,85 @@ export function ExplorePage() {
             })}
           </div>
         )}
+      </section>
+
+      {/* ── Rent table: answers "how much is a 1BHK in BTM Layout?" ───── */}
+      {!loading && pageHomes.length > 0 && (
+        <section className="zx__container">
+          <div className="zx-rents">
+            <h2 className="zx-rents__title font-heading">
+              {page ? rentTableHeading(page) : "Rent in Bengaluru"}
+            </h2>
+            <p className="zx-rents__note font-lora">
+              Based on the {pageHomes.length} {pageHomes.length === 1 ? "home" : "homes"} we have
+              listed {page ? "here" : "in Bengaluru"} right now.
+            </p>
+            <table className="zx-rents__table font-lora">
+              <thead>
+                <tr>
+                  <th scope="col">Home type</th>
+                  <th scope="col">Rent</th>
+                  <th scope="col">Typical rent</th>
+                  <th scope="col">Typical deposit</th>
+                </tr>
+              </thead>
+              <tbody>
+                {rentsByType(pageHomes).map((row) => (
+                  <tr key={row.type}>
+                    <td>
+                      {row.type}
+                      <small>
+                        {row.count} {row.count === 1 ? "home" : "homes"}
+                      </small>
+                    </td>
+                    <td>
+                      {row.low === row.high
+                        ? money(row.low)
+                        : `${money(row.low)} – ${money(row.high)}`}
+                    </td>
+                    <td>{money(row.typical)}</td>
+                    <td>
+                      {row.depositMonths
+                        ? `${row.depositMonths} ${row.depositMonths === 1 ? "month's" : "months'"} rent`
+                        : "—"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      )}
+
+      {/* ── Area and budget pages: crawlable links between them and back to all homes ── */}
+      <section className="zx__container">
+        <nav className="zx-areas" aria-label="Browse homes by area and budget">
+          {budgetLinks.length > 0 && (
+            <>
+              <h2 className="zx-areas__title font-heading">{rentLabel(budgetBase)} by budget</h2>
+              <ul className="zx-areas__list zx-areas__list--group font-lora">
+                {budgetLinks.map((other) => (
+                  <li key={other.slug}>
+                    <Link to={rentPath(other)}>{rentLabel(other)}</Link>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+          <h2 className="zx-areas__title font-heading">Browse homes by area</h2>
+          <ul className="zx-areas__list font-lora">
+            {page && (
+              <li>
+                <Link to="/explore">All homes in Bengaluru</Link>
+              </li>
+            )}
+            {RENT_PAGES.filter((other) => other.slug !== page?.slug).map((other) => (
+              <li key={other.slug}>
+                <Link to={rentPath(other)}>{rentLabel(other)}</Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
       </section>
 
       {/* ── Property Detail Modal ─────────────────────────────────────── */}

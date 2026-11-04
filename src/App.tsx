@@ -1,5 +1,6 @@
 import { useEffect } from "react";
-import { Route, Routes, useLocation } from "react-router-dom";
+import { Link, Route, Routes, useLocation, useParams } from "react-router-dom";
+import { House } from "lucide-react";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import { Header } from "./components/Header";
@@ -7,6 +8,7 @@ import { Hero } from "./components/Hero";
 import { FloatingWhatsApp } from "./components/FloatingWhatsApp";
 import { ProblemsVsSolutions } from "./components/ProblemsVsSolutions";
 import { HowItWorks } from "./components/HowItWorks";
+import { BrowseByArea } from "./components/BrowseByArea";
 import { PropertiesGallery } from "./components/PropertiesGallery";
 import { ExplorePage } from "./components/ExplorePage";
 import { Testimonials } from "./components/Testimonials";
@@ -15,7 +17,8 @@ import { AboutPage } from "./components/AboutPage";
 import { ContactPage } from "./components/ContactPage";
 import { FinalCTA } from "./components/FinalCTA";
 import { Footer } from "./components/Footer";
-import { PAGE_META, SITE_URL } from "./components/pageMeta";
+import { NOT_FOUND_META, SITE_URL, pageMetaFor } from "./components/pageMeta";
+import { findRentPage } from "./components/rentPages";
 
 function HomePage() {
   const heroImage = "/hero-bg.png";
@@ -25,9 +28,47 @@ function HomePage() {
       <Hero backgroundImage={heroImage} />
       <ProblemsVsSolutions />
       <HowItWorks />
+      <BrowseByArea />
       <PropertiesGallery />
       <Testimonials />
       <FinalCTA />
+      <Footer />
+    </>
+  );
+}
+
+// An area or budget page is the Explore page narrowed to its homes
+function RentPageRoute() {
+  const { slug } = useParams();
+  const page = findRentPage(slug || "");
+  return page ? <ExplorePage key={page.slug} page={page} /> : <NotFoundPage />;
+}
+
+function NotFoundPage() {
+  return (
+    <>
+      <main className="bg-[#FEF2E2] pt-28 md:pt-36 pb-16 md:pb-20">
+        <div className="max-w-[1440px] mx-auto px-5 sm:px-8 lg:px-12">
+          <h1
+            className="font-heading-78 text-[#3B2F2F]"
+            style={{ fontSize: "clamp(2.5rem, 5vw, 4rem)", lineHeight: 1.2, marginBottom: "1.5rem" }}
+          >
+            Page not found
+          </h1>
+          <p
+            className="font-lora text-[#3B2F2F]"
+            style={{ fontSize: "1.25rem", lineHeight: 1.75, opacity: 0.9, maxWidth: "40rem", marginBottom: "2rem" }}
+          >
+            This page doesn't exist or has moved. Take a look at our rental homes in Bengaluru instead.
+          </p>
+          <Link to="/explore" className="inline-flex whatsapp-cta-btn">
+            <span className="whatsapp-cta-icon">
+              <House aria-hidden="true" />
+            </span>
+            <span className="whatsapp-cta-label">Explore Homes</span>
+          </Link>
+        </div>
+      </main>
       <Footer />
     </>
   );
@@ -75,8 +116,8 @@ function PageMeta() {
 
   useEffect(() => {
     const path = pathname.replace(/\/+$/, "") || "/";
-    const meta = PAGE_META[path];
-    const { title, description } = meta || PAGE_META["/"];
+    const meta = pageMetaFor(path);
+    const { title, description } = meta || NOT_FOUND_META;
     const url = `${SITE_URL}${path === "/" ? "/" : path}`;
 
     document.title = title;
@@ -112,6 +153,8 @@ function App() {
         <Route path="/about" element={<AboutPage />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/careers" element={<CareersPage />} />
+        <Route path="/rent/:slug" element={<RentPageRoute />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
       <FloatingWhatsApp />
       <Analytics />
