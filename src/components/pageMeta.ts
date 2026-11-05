@@ -1,5 +1,6 @@
 // Title and description for each route, for search results and link previews.
-// Keep titles under ~60 characters and descriptions under ~160.
+// Keep titles to 60 characters or fewer (Google cuts longer ones off) and descriptions between
+// 120 and 150; the build warns about any that aren't (scripts/prerender.mjs).
 // Every route listed here is prerendered and goes in the sitemap (scripts/prerender.mjs), along
 // with the budget pages the current homes justify.
 
@@ -13,7 +14,7 @@ export const PAGE_META: Record<string, PageMeta> = {
   "/": {
     title: "Zenant | Rental Homes and Flats for Rent in Bengaluru",
     description:
-      "Find verified rental homes in Bengaluru: HSR Layout, Koramangala, BTM Layout, Madiwala and Silk Board. Compare rents, book visits and move in with Zenant.",
+      "Find verified rental homes in Bengaluru: HSR Layout, Koramangala, BTM Layout, Madiwala and Silk Board. Compare rents, book visits and move in.",
   },
   "/explore": {
     title: "Flats for Rent in Bengaluru | Zenant",
@@ -23,17 +24,17 @@ export const PAGE_META: Record<string, PageMeta> = {
   "/about": {
     title: "About Zenant | Rental Brokerage in Bengaluru",
     description:
-      "Zenant is a full-service residential rental brokerage in Bengaluru, helping tenants find homes and landlords find the right tenants, from first enquiry to move-in.",
+      "Zenant is a rental brokerage in Bengaluru that helps tenants find homes and landlords find the right tenants, from first enquiry to move-in.",
   },
   "/contact": {
     title: "Contact Zenant | Rental Homes in Bengaluru",
     description:
-      "Get in touch with Zenant to find a rental home or list your property in Bengaluru. Call us or chat with us on WhatsApp.",
+      "Get in touch with Zenant to find a rental home or list your property in Bengaluru. Call us, or chat with our team on WhatsApp.",
   },
   "/careers": {
     title: "Careers at Zenant | Jobs in Bengaluru",
     description:
-      "Join Zenant and help build a tenant-first rental experience in Bengaluru. See open roles and how to apply.",
+      "Join Zenant and help build a tenant-first rental experience in Bengaluru. See our open roles, read the job details and find out how to apply.",
   },
   ...Object.fromEntries(
     RENT_PAGES.map((page) => [rentPath(page), { title: page.title, description: page.description }])

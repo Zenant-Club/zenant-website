@@ -62,6 +62,15 @@ export const API_BASE = (
 // size (often 4032x3024, over 1 MB), which made the property grid slow to scroll.
 export const cardPhoto = (p: Property) => (p.thumb ? `${API_BASE}${p.thumb}` : p.image);
 
+// Alt text for a home's photos, from its details rather than its title (titles are internal
+// codes like "KP - BTM2- 1BHK"): "Furnished 1BHK for rent in BTM Layout"
+export function homePhotoAlt(p: Property) {
+  const type = /^\d/.test(p.type || "") ? p.type : (p.type || "home").toLowerCase();
+  const furnishing = p.furnishing ? `${p.furnishing.toLowerCase()} ` : "";
+  const text = `${furnishing}${type} for rent in ${p.area || "Bengaluru"}`;
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
 // If the resized copy can't load, show the full-size original rather than a broken photo
 export const fallBackToOriginal =
   (p: Property) => (e: { currentTarget: HTMLImageElement }) => {

@@ -75,7 +75,7 @@ export const RENT_PAGES: RentPage[] = [
     areas: ["BTM 2nd Stage", "BTM Layout 2nd Stage"],
     title: "Flats for Rent in BTM 2nd Stage, Bangalore | Zenant",
     description:
-      "Browse flats for rent in BTM 2nd Stage, Bangalore, near Jayadeva and the BTM Layout metro station. See rent, deposit and photos, then book visits online.",
+      "Browse flats for rent in BTM 2nd Stage, Bangalore, near Jayadeva and BTM Layout metro station. See rent, deposit and photos, then book visits online.",
     intro:
       "BTM 2nd Stage is the part of BTM Layout closest to JP Nagar and Jayanagar, with the BTM Layout and Jayadeva Hospital metro stations on the Yellow Line nearby, and Silk Board and Koramangala a short ride away.",
   },
@@ -86,7 +86,7 @@ export const RENT_PAGES: RentPage[] = [
     areas: ["Koramangala"],
     title: "Flats for Rent in Koramangala, Bangalore | Zenant",
     description:
-      "Browse flats for rent in Koramangala, Bangalore, near Christ University, St. John's and Nexus Mall. See rent, deposit and photos, then book visits online.",
+      "Browse flats for rent in Koramangala, Bangalore, near Christ University, St. John's and Nexus Mall. See rent, deposit and photos, then book visits.",
     intro:
       "Koramangala is one of Bengaluru's best-known neighbourhoods, full of startups, cafés and restaurants. Christ University, St. John's Medical College and Nexus Mall Koramangala are all close by, as are BTM Layout and HSR Layout.",
   },
@@ -119,7 +119,7 @@ export const RENT_PAGES: RentPage[] = [
     areas: ["Madiwala", "Maruti Nagar", "Maruthi Nagar"],
     title: "Flats for Rent in Madiwala & Maruti Nagar, Bangalore",
     description:
-      "Browse flats for rent in Madiwala and Maruti Nagar, Bangalore, near Koramangala, BTM Layout and Silk Board. See rent, deposit and photos, then book visits.",
+      "Browse flats for rent in Madiwala and Maruti Nagar, Bangalore, near Koramangala, BTM Layout and Silk Board. See rent, deposit and photos online.",
     intro:
       "Madiwala and neighbouring Maruti Nagar sit along Hosur Road between Koramangala, BTM Layout and Silk Board, with St. John's Medical College and Christ University a short ride away.",
   },
@@ -131,7 +131,7 @@ export const RENT_PAGES: RentPage[] = [
     areas: ["SG Palya", "SG Palaya", "Tavarekere"],
     title: "Flats for Rent near Christ University, Bangalore | Zenant",
     description:
-      "Find flats for rent near Christ University, Bangalore, in SG Palya and Tavarekere. See rent, deposit and photos of every home, then book visits online.",
+      "Find flats for rent near Christ University, Bangalore, in SG Palya and Tavarekere. See rent, deposit and photos of each home, then book visits online.",
     intro:
       "Christ University's main campus is on Hosur Road in SG Palya, next to Tavarekere and close to Dairy Circle, Koramangala and BTM Layout. The homes here are in SG Palya and Tavarekere, the neighbourhoods right around the campus.",
   },
@@ -142,7 +142,7 @@ export const RENT_PAGES: RentPage[] = [
     areas: ["JP Nagar"],
     title: "Flats for Rent in JP Nagar, Bangalore | Zenant",
     description:
-      "Browse flats for rent in JP Nagar, Bangalore, close to Jayanagar, BTM Layout and Bannerghatta Road. See rent, deposit and photos, then book visits online.",
+      "Browse flats for rent in JP Nagar, Bangalore, near Jayanagar, BTM Layout and Bannerghatta Road. See rent, deposit and photos, then book visits online.",
     intro:
       "JP Nagar is a large, mostly residential neighbourhood in south Bengaluru, next to Jayanagar, BTM Layout and Bannerghatta Road, with markets, schools and hospitals close by.",
   },
@@ -180,16 +180,23 @@ function budgetPage(base: RentPage, maxRent: number): RentPage {
   const lead = `${base.lead.slice(0, -preposition.length)}under ${money(maxRent)} ${preposition}`;
   const label = `${lead} ${base.place}`;
   const homes = base.type ? `${base.type} we have` : "home we have";
+  // Titles keep the brand only while they fit in 60 characters; descriptions use the longer
+  // ending only while they fit in 150 (see pageMeta.ts)
+  const title = capitalize(label).replace(/flats for rent/i, "Flats for Rent");
+  const where = base.areas ? ", Bangalore" : "";
+  const browse = `Browse ${label.charAt(0).toLowerCase()}${label.slice(1)}${where}.`;
+  const description = `${browse} See rent, deposit and photos for every home, then book your visits online.`;
   return {
     ...base,
     slug: `${base.slug}-under-${maxRent}`,
     lead,
     maxRent,
     base,
-    title: `${capitalize(label).replace(/flats for rent/i, "Flats for Rent")} | Zenant`,
-    description: `Browse ${label.charAt(0).toLowerCase()}${label.slice(1)}${
-      base.areas ? ", Bangalore" : ""
-    }. See rent, deposit and photos for every home, then book your visits online.`,
+    title: `${title} | Zenant`.length <= 60 ? `${title} | Zenant` : title,
+    description:
+      description.length <= 150
+        ? description
+        : `${browse} See rent, deposit and photos, then book visits online.`,
     intro: `Every ${homes} ${preposition} ${base.place} with rent under ${money(maxRent)} a month. ${
       base.intro
     }`,

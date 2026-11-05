@@ -5,6 +5,7 @@ import { StaticRouter } from "react-router-dom";
 import App from "./App";
 import { Property, setBuildListings } from "./components/exploreShared";
 
+export { HERO_IMAGE } from "./App";
 export { LISTINGS_SCRIPT_ID } from "./components/exploreShared";
 export { NOT_FOUND_META, PAGE_META, SITE_URL } from "./components/pageMeta";
 export {

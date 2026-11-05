@@ -20,12 +20,13 @@ import { Footer } from "./components/Footer";
 import { NOT_FOUND_META, SITE_URL, pageMetaFor } from "./components/pageMeta";
 import { findRentPage } from "./components/rentPages";
 
-function HomePage() {
-  const heroImage = "/hero-bg.png";
+// The homepage's main image; the build also preloads it (scripts/prerender.mjs)
+export const HERO_IMAGE = "/hero-bg.webp";
 
+function HomePage() {
   return (
     <>
-      <Hero backgroundImage={heroImage} />
+      <Hero backgroundImage={HERO_IMAGE} />
       <ProblemsVsSolutions />
       <HowItWorks />
       <BrowseByArea />

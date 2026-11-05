@@ -8,9 +8,8 @@ import clsx from "clsx";
 interface Property {
   id: number;
   image: string;
-  title: string;
-  location: string;
-  description: string;
+  // Describes what the photo shows, for search engines and screen readers
+  alt: string;
 }
 
 export function PropertiesGallery() {
@@ -32,7 +31,7 @@ export function PropertiesGallery() {
 
   const [canScrollNext, setCanScrollNext] = useState(true);
   const [canScrollPrev, setCanScrollPrev] = useState(true);
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [previewImage, setPreviewImage] = useState<Property | null>(null);
 
   const scrollPrev = useCallback(() => {
     if (emblaApi) emblaApi.scrollPrev();
@@ -95,11 +94,11 @@ export function PropertiesGallery() {
                   {/* Image Container */}
                   <div 
                     className="relative zenant-propertiesGallery__media zenant-propertiesGallery__surface group overflow-hidden cursor-zoom-in"
-                    onClick={() => setPreviewImage(item.image)}
+                    onClick={() => setPreviewImage(item)}
                   >
                     <img
                       src={item.image}
-                      alt={item.title}
+                      alt={item.alt}
                       loading="lazy"
                       className="zenant-propertiesGallery__image"
                     />
@@ -155,8 +154,8 @@ export function PropertiesGallery() {
             <X size={40} strokeWidth={1.5} />
           </button>
           <img 
-            src={previewImage} 
-            alt="Preview" 
+            src={previewImage.image}
+            alt={previewImage.alt}
             className="zenant-lightbox-image"
             onClick={(e) => e.stopPropagation()}
           />

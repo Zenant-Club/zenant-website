@@ -143,6 +143,15 @@ async function main() {
     });
 
   for (const [route, meta] of routes) {
+    // Google cuts titles off after about 60 characters and shows roughly 120-150 of a description
+    if (meta.title.length > 60) {
+      console.warn(`prerender: warning: ${route} title is ${meta.title.length} characters; keep to 60`);
+    }
+    if (meta.description.length < 120 || meta.description.length > 150) {
+      console.warn(
+        `prerender: warning: ${route} description is ${meta.description.length} characters; keep to 120-150`
+      );
+    }
     const withListings = showsListings(route);
     const rentPage = rentPageAt.get(route);
     const html = pageHtml(template, {
@@ -151,7 +160,15 @@ async function main() {
       indexable: true,
       appHtml: server.render(route, withListings ? listings : null),
       dataScript: withListings ? listingsScript : "",
-      headExtra: rentPage && breadcrumbData(rentPage),
+      headExtra: [
+        rentPage && breadcrumbData(rentPage),
+        // The homepage's biggest image is a CSS background, which browsers otherwise only find
+        // after the stylesheet has loaded
+        route === "/" &&
+          `<link rel="preload" as="image" href="${server.HERO_IMAGE}" fetchpriority="high" />`,
+      ]
+        .filter(Boolean)
+        .join("\n    "),
     });
     const file = path.join(OUT_DIR, route === "/" ? "index.html" : `${route.slice(1)}.html`);
     await mkdir(path.dirname(file), { recursive: true });

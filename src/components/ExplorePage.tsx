@@ -27,6 +27,7 @@ import {
   PropertyDetail,
   cardPhoto,
   fallBackToOriginal,
+  homePhotoAlt,
   money,
   prerenderedListings,
   rememberListings,
@@ -685,7 +686,7 @@ export function ExplorePage({ page }: { page?: RentPage }) {
           </div>
         ) : (
           <div className="zx__grid">
-            {filteredProperties.map((property) => {
+            {filteredProperties.map((property, index) => {
               const saved = inVisitList(property.id);
               return (
               <div key={property.id} className="zx-cardWrap">
@@ -713,8 +714,8 @@ export function ExplorePage({ page }: { page?: RentPage }) {
                   {property.image ? (
                     <img
                       src={cardPhoto(property) || undefined}
-                      alt=""
-                      loading="lazy"
+                      alt={homePhotoAlt(property)}
+                      loading={index < 3 ? "eager" : "lazy"}
                       decoding="async"
                       onError={fallBackToOriginal(property)}
                     />
@@ -885,7 +886,7 @@ export function ExplorePage({ page }: { page?: RentPage }) {
                       {selected.images[imageIndex] ? (
                         <img
                           src={selected.images[imageIndex]}
-                          alt={`${selected.title}, photo ${imageIndex + 1} of ${selected.images.length}`}
+                          alt={`${homePhotoAlt(selected)}, photo ${imageIndex + 1} of ${selected.images.length}`}
                         />
                       ) : (
                         <div className="zx-card__noPhoto font-lora">
