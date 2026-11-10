@@ -715,7 +715,9 @@ export function ExplorePage({ page }: { page?: RentPage }) {
                     <img
                       src={cardPhoto(property) || undefined}
                       alt={homePhotoAlt(property)}
-                      loading={index < 3 ? "eager" : "lazy"}
+                      // Only the first photo is surely on screen (phones show one card per row);
+                      // loading more up front slows it down by sharing the connection
+                      loading={index === 0 ? "eager" : "lazy"}
                       decoding="async"
                       onError={fallBackToOriginal(property)}
                     />
