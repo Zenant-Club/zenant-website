@@ -7,6 +7,7 @@ import {
   Clock3,
   Home,
   Images,
+  // Mail, // for the email field, hidden until email confirmations are live
   MapPin,
   ShoppingCart,
   Trash2,
@@ -32,19 +33,25 @@ import {
 type VisitorFieldsProps = {
   name: string;
   phone: string;
+  email: string;
   moveInDate: string;
   onName: (value: string) => void;
   onPhone: (value: string) => void;
+  onEmail: (value: string) => void;
   onMoveInDate: (value: string) => void;
 };
 
-// Name, WhatsApp number and move-in date for cart checkout
+// Name, WhatsApp number and move-in date for cart checkout. The optional email field is
+// commented out until booking confirmation emails are switched on (RESEND_API_KEY in the
+// booking API); the email state and request field stay wired, so uncommenting is enough.
 export function VisitorFields({
   name,
   phone,
+  // email,
   moveInDate,
   onName,
   onPhone,
+  // onEmail,
   onMoveInDate,
 }: VisitorFieldsProps) {
   return (
@@ -76,6 +83,21 @@ export function VisitorFields({
           autoComplete="tel-national"
         />
       </div>
+      {/* Hidden until booking confirmation emails are live
+      <div className="zx__field">
+        <Mail className="zx__fieldIcon" />
+        <input
+          type="email"
+          className="zx__input"
+          value={email}
+          onChange={(e) => onEmail(e.target.value)}
+          placeholder="Email (optional)"
+          aria-label="Email (optional)"
+          autoComplete="email"
+          maxLength={254}
+        />
+      </div>
+      */}
       <label className="zx-book__moveIn font-lora">
         <span>Move-in date</span>
         <div className="zx__field">
@@ -104,6 +126,19 @@ type BookingResult = {
   status: "scheduled" | "already_scheduled" | "failed";
 };
 
+// Which confirmations the booking API sent; null when nothing new was booked
+type Notified = { whatsapp: boolean; email: boolean | null } | null;
+
+function successMessage(notified: Notified, host: string | null) {
+  const caller = host ? `${host} from our team` : "Our team";
+  if (notified?.whatsapp) {
+    return `All set! We've sent your visit details to your WhatsApp${
+      notified.email ? " and email" : ""
+    }. ${caller} will call or message you before the visit.`;
+  }
+  return `All set! ${caller} will contact you on WhatsApp to confirm your visits.`;
+}
+
 type VisitListDrawerProps = VisitorFieldsProps & {
   open: boolean;
   items: Property[];
@@ -124,6 +159,7 @@ export function VisitListDrawer({
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [results, setResults] = useState<BookingResult[] | null>(null);
+  const [confirmation, setConfirmation] = useState("");
 
   const dates = useMemo(bookingDates, []);
   const defaultDate = useMemo(() => dateKey(firstBookableDate()), []);
@@ -168,6 +204,7 @@ export function VisitListDrawer({
         body: JSON.stringify({
           name: visitor.name,
           phone: visitor.phone,
+          email: visitor.email.trim() || undefined,
           move_in_date: visitor.moveInDate,
           visits: snapshot.map((v) => ({
             property_id: v.property.id,
@@ -209,6 +246,7 @@ export function VisitListDrawer({
         booked.forEach((id) => delete next[id]);
         return next;
       });
+      setConfirmation(successMessage(payload.notified ?? null, payload.handled_by || null));
       setResults(outcome);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not schedule your visits.");
@@ -254,7 +292,7 @@ export function VisitListDrawer({
               </div>
               <p className="font-lora">
                 {failedCount === 0
-                  ? "All set! Our property manager will contact you on WhatsApp to confirm your visits."
+                  ? confirmation
                   : "Some visits couldn't be booked and are still in your cart — please try those again."}
               </p>
             </div>

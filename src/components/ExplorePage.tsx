@@ -161,6 +161,7 @@ export function ExplorePage({ page }: { page?: RentPage }) {
   // Visitor details, kept here so they survive closing and reopening the cart
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
   const [moveInDate, setMoveInDate] = useState("");
 
   // Cart: the only way to book — one home or several, all checked out together.
@@ -410,9 +411,11 @@ export function ExplorePage({ page }: { page?: RentPage }) {
   const visitorFields = {
     name,
     phone,
+    email,
     moveInDate,
     onName: setName,
     onPhone: setPhone,
+    onEmail: setEmail,
     onMoveInDate: setMoveInDate,
   };
 
