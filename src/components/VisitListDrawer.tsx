@@ -7,7 +7,7 @@ import {
   Clock3,
   Home,
   Images,
-  // Mail, // for the email field, hidden until email confirmations are live
+  Mail,
   MapPin,
   ShoppingCart,
   Trash2,
@@ -41,17 +41,15 @@ type VisitorFieldsProps = {
   onMoveInDate: (value: string) => void;
 };
 
-// Name, WhatsApp number and move-in date for cart checkout. The optional email field is
-// commented out until booking confirmation emails are switched on (RESEND_API_KEY in the
-// booking API); the email state and request field stay wired, so uncommenting is enough.
+// Name, WhatsApp number, optional email and move-in date for cart checkout
 export function VisitorFields({
   name,
   phone,
-  // email,
+  email,
   moveInDate,
   onName,
   onPhone,
-  // onEmail,
+  onEmail,
   onMoveInDate,
 }: VisitorFieldsProps) {
   return (
@@ -83,7 +81,6 @@ export function VisitorFields({
           autoComplete="tel-national"
         />
       </div>
-      {/* Hidden until booking confirmation emails are live
       <div className="zx__field">
         <Mail className="zx__fieldIcon" />
         <input
@@ -97,7 +94,6 @@ export function VisitorFields({
           maxLength={254}
         />
       </div>
-      */}
       <label className="zx-book__moveIn font-lora">
         <span>Move-in date</span>
         <div className="zx__field">
