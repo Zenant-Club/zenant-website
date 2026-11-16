@@ -41,7 +41,7 @@ type VisitorFieldsProps = {
   onMoveInDate: (value: string) => void;
 };
 
-// Name, WhatsApp number, optional email and move-in date for cart checkout
+// Name, WhatsApp number, email and move-in date for cart checkout
 export function VisitorFields({
   name,
   phone,
@@ -84,12 +84,13 @@ export function VisitorFields({
       <div className="zx__field">
         <Mail className="zx__fieldIcon" />
         <input
+          required
           type="email"
           className="zx__input"
           value={email}
           onChange={(e) => onEmail(e.target.value)}
-          placeholder="Email (optional)"
-          aria-label="Email (optional)"
+          placeholder="Email"
+          aria-label="Email"
           autoComplete="email"
           maxLength={254}
         />
@@ -189,7 +190,7 @@ export function VisitListDrawer({
 
   async function bookAll(event: FormEvent) {
     event.preventDefault();
-    if (!allTimed || !visitor.moveInDate) return;
+    if (!allTimed || !visitor.moveInDate || !visitor.email.trim()) return;
     const snapshot = items.map((property) => ({ property, ...slotFor(property.id) }));
     setSubmitting(true);
     setError(null);
@@ -200,7 +201,7 @@ export function VisitListDrawer({
         body: JSON.stringify({
           name: visitor.name,
           phone: visitor.phone,
-          email: visitor.email.trim() || undefined,
+          email: visitor.email.trim(),
           move_in_date: visitor.moveInDate,
           visits: snapshot.map((v) => ({
             property_id: v.property.id,
