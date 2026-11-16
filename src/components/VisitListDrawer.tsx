@@ -76,8 +76,8 @@ export function VisitorFields({
           style={{ paddingLeft: "3rem" }}
           value={phone}
           onChange={(e) => onPhone(e.target.value)}
-          placeholder="WhatsApp number"
-          aria-label="WhatsApp number"
+          placeholder="Enter your WhatsApp number"
+          aria-label="Enter your WhatsApp number"
           autoComplete="tel-national"
         />
       </div>
