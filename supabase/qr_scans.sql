@@ -1,6 +1,6 @@
 -- QR scan tracker: one row per scan of a printed QR code (www.zenant.club/card, ...).
 --
--- Rows are written by the website's api/qr.mts function with the Supabase
+-- Rows are written by the website's api/qr.ts function with the Supabase
 -- publishable (anon) key. That key can only INSERT here: it cannot read,
 -- change or delete scans. Read them in the Supabase dashboard (the postgres
 -- role), e.g. the qr_scans_daily view below.

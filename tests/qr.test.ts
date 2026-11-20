@@ -1,7 +1,7 @@
 // Run: npm test
 import { afterEach, beforeEach, describe, it } from "node:test";
 import assert from "node:assert/strict";
-import qr, { isBot, parseUserAgent, recordScan } from "../api/qr.mts";
+import qr, { isBot, parseUserAgent, recordScan } from "../api/qr.ts";
 
 const IPHONE =
   "Mozilla/5.0 (iPhone; CPU iPhone OS 18_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.0 Mobile/15E148 Safari/604.1";

@@ -5,7 +5,7 @@ import { Footer } from "./Footer";
 import { OWNER_PHONE, ownerWhatsAppLink } from "./ownerContact";
 
 // For landlords and property owners. The printed owner card's QR lands here
-// (www.zenant.club/card -> /owners?utm_source=owner_card, see api/qr.mts).
+// (www.zenant.club/card -> /owners?utm_source=owner_card, see api/qr.ts).
 //
 // Styling note: src/index.css is pre-built Tailwind, so only classes the site already used exist.
 // Anything else here is an inline style or lives in src/styles/ownersPage.css.
