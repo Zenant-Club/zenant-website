@@ -6,6 +6,7 @@ import "./index.css";
 import "./styles/propertiesGallery.css";
 import "./styles/explorePage.css";
 import "./styles/customUtils.css";
+import "./styles/ownersPage.css";
 
 const root = document.getElementById("root")!;
 const app = (

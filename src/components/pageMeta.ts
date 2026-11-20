@@ -31,6 +31,11 @@ export const PAGE_META: Record<string, PageMeta> = {
     description:
       "Get in touch with Zenant to find a rental home or list your property in Bengaluru. Call us, or chat with our team on WhatsApp.",
   },
+  "/owners": {
+    title: "List Your Property for Rent in Bengaluru | Zenant",
+    description:
+      "Rent out your Bengaluru home with Zenant. We market your property, screen every enquiry and arrange visits in HSR, Koramangala, BTM and nearby.",
+  },
   "/careers": {
     title: "Careers at Zenant | Jobs in Bengaluru",
     description:

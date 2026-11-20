@@ -15,6 +15,7 @@ import { Testimonials } from "./components/Testimonials";
 import { CareersPage } from "./components/CareersPage";
 import { AboutPage } from "./components/AboutPage";
 import { ContactPage } from "./components/ContactPage";
+import { OwnersPage } from "./components/OwnersPage";
 import { FinalCTA } from "./components/FinalCTA";
 import { Footer } from "./components/Footer";
 import { NOT_FOUND_META, SITE_URL, pageMetaFor } from "./components/pageMeta";
@@ -154,6 +155,7 @@ function App() {
         <Route path="/about" element={<AboutPage />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/careers" element={<CareersPage />} />
+        <Route path="/owners" element={<OwnersPage />} />
         <Route path="/rent/:slug" element={<RentPageRoute />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>

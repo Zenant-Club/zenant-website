@@ -3,7 +3,12 @@
   "outputDirectory": "build",
   "cleanUrls": true,
   "trailingSlash": false,
+  "regions": ["bom1"],
   "rewrites": [
+    {
+      "source": "/:code(card)",
+      "destination": "/api/qr?code=:code"
+    },
     {
       "source": "/api/public/:path*",
       "destination": "https://zenant-whatsapp-26342061489.asia-south1.run.app/api/public/:path*"

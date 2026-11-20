@@ -1,7 +1,14 @@
+import { useLocation } from "react-router-dom";
+import { ownerWhatsAppLink } from "./ownerContact";
+
 export function FloatingWhatsApp() {
+  const { pathname } = useLocation();
+  // On the owners page the button reaches the owner team; everywhere else, the tenant line
+  const href = pathname === "/owners" ? ownerWhatsAppLink() : "https://wa.me/918050410310";
+
   return (
     <a
-      href="https://wa.me/918050410310"
+      href={href}
       target="_blank"
       rel="noopener noreferrer"
       className="floating-wa-btn group"

@@ -42,6 +42,11 @@ export function Footer() {
                 </a>
               </li>
               <li>
+                <a href="/owners" className="hover:text-[#A04E3C] transition-colors">
+                  For Property Owners
+                </a>
+              </li>
+              <li>
                 <a href="/careers" className="hover:text-[#A04E3C] transition-colors">
                   Careers
                 </a>
