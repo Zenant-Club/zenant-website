@@ -4,6 +4,13 @@
   "cleanUrls": true,
   "trailingSlash": false,
   "regions": ["bom1"],
+  "redirects": [
+    {
+      "source": "/l/:id(\\d+)/:number(\\d+)",
+      "destination": "https://wa.me/p/:id/:number",
+      "permanent": false
+    }
+  ],
   "rewrites": [
     {
       "source": "/:code(card)",
