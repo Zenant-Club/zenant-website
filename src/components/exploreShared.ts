@@ -78,7 +78,7 @@ export const fallBackToOriginal =
   };
 
 // Matches MAX_VISITS_PER_BOOKING in the booking API
-export const MAX_VISIT_LIST = 10;
+export const MAX_VISIT_LIST = 5;
 
 // Every 30 minutes from 9:00 AM to 8:00 PM
 export const TIME_SLOTS = Array.from({ length: 23 }, (_, i) => {

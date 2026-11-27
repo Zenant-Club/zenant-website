@@ -1,6 +1,5 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import {
-  AlertCircle,
   CalendarDays,
   CheckCircle2,
   ChevronDown,
@@ -116,12 +115,8 @@ export function VisitorFields({
 
 type Slot = { date: string; time: string };
 
-type BookingResult = {
-  property: Property;
-  date: string;
-  time: string;
-  status: "scheduled" | "already_scheduled" | "failed";
-};
+// The whole cart is one tour: one start time, homes visited in one trip
+type BookedTour = Slot & { homes: Property[] };
 
 // Which confirmations the booking API sent; null when nothing new was booked
 type Notified = { whatsapp: boolean; email: boolean | null } | null;
@@ -152,18 +147,15 @@ export function VisitListDrawer({
   onBooked,
   ...visitor
 }: VisitListDrawerProps) {
-  const [slots, setSlots] = useState<Record<string, Slot>>({});
+  const [slot, setSlot] = useState<Slot>(() => ({ date: dateKey(firstBookableDate()), time: "" }));
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [results, setResults] = useState<BookingResult[] | null>(null);
+  const [booked, setBooked] = useState<BookedTour | null>(null);
   const [confirmation, setConfirmation] = useState("");
 
   const dates = useMemo(bookingDates, []);
-  const defaultDate = useMemo(() => dateKey(firstBookableDate()), []);
-  const slotFor = (id: string): Slot => slots[id] || { date: defaultDate, time: "" };
-
-  const updateSlot = (id: string, next: Partial<Slot>) =>
-    setSlots((prev) => ({ ...prev, [id]: { ...slotFor(id), ...next } }));
+  const times = TIME_SLOTS.filter((t) => isSlotAvailable(fromDateKey(slot.date), t));
+  const isTour = items.length > 1;
 
   // Lock page scroll and allow Escape to close while open
   useEffect(() => {
@@ -181,17 +173,18 @@ export function VisitListDrawer({
   }, [open]);
 
   function close() {
-    setResults(null);
+    setBooked(null);
     setError(null);
     onClose();
   }
 
-  const allTimed = items.length > 0 && items.every((item) => slotFor(item.id).time);
+  const timed = items.length > 0 && Boolean(slot.time);
 
   async function bookAll(event: FormEvent) {
     event.preventDefault();
-    if (!allTimed || !visitor.moveInDate || !visitor.email.trim()) return;
-    const snapshot = items.map((property) => ({ property, ...slotFor(property.id) }));
+    if (!timed || !visitor.moveInDate || !visitor.email.trim()) return;
+    const homes = [...items];
+    const when = { ...slot };
     setSubmitting(true);
     setError(null);
     try {
@@ -203,11 +196,9 @@ export function VisitListDrawer({
           phone: visitor.phone,
           email: visitor.email.trim(),
           move_in_date: visitor.moveInDate,
-          visits: snapshot.map((v) => ({
-            property_id: v.property.id,
-            visit_date: v.date,
-            visit_time: v.time,
-          })),
+          visit_date: when.date,
+          visit_time: when.time,
+          property_ids: homes.map((home) => home.id),
         }),
       });
       const payload = await response.json();
@@ -221,32 +212,14 @@ export function VisitListDrawer({
             } removed from your cart. Please review and book again.`
           );
         }
-        const culprit = snapshot.find((v) => v.property.id === payload.property_id);
-        throw new Error(
-          (culprit ? `${culprit.property.title}: ` : "") +
-            (payload.error || "Could not schedule your visits. Please try again.")
-        );
+        throw new Error(payload.error || "Could not schedule your visit. Please try again.");
       }
-      const statusById = new Map<string, BookingResult["status"]>(
-        (payload.results || []).map((r: { property_id: string; status: BookingResult["status"] }) => [
-          r.property_id,
-          r.status,
-        ])
-      );
-      const outcome = snapshot
-        .map((v) => ({ ...v, status: statusById.get(v.property.id) || "failed" }))
-        .sort((a, b) => `${a.date} ${a.time}`.localeCompare(`${b.date} ${b.time}`));
-      const booked = outcome.filter((r) => r.status !== "failed").map((r) => r.property.id);
-      onBooked(booked);
-      setSlots((prev) => {
-        const next = { ...prev };
-        booked.forEach((id) => delete next[id]);
-        return next;
-      });
+      onBooked(homes.map((home) => home.id));
+      setSlot((prev) => ({ ...prev, time: "" }));
       setConfirmation(successMessage(payload.notified ?? null, payload.handled_by || null));
-      setResults(outcome);
+      setBooked({ ...when, homes });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not schedule your visits.");
+      setError(err instanceof Error ? err.message : "Could not schedule your visit.");
     } finally {
       setSubmitting(false);
     }
@@ -254,7 +227,8 @@ export function VisitListDrawer({
 
   if (!open) return null;
 
-  const failedCount = results?.filter((r) => r.status === "failed").length || 0;
+  const dayLabel = (key: string) =>
+    fromDateKey(key).toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short" });
 
   return (
     <div
@@ -269,8 +243,10 @@ export function VisitListDrawer({
       <aside className="zx-drawer__panel">
         <header className="zx-drawer__head">
           <div>
-            <h2 className="font-heading">{results ? "Visits requested" : "Your cart"}</h2>
-            {!results && (
+            <h2 className="font-heading">
+              {booked ? (booked.homes.length > 1 ? "Tour booked" : "Visit booked") : "Your cart"}
+            </h2>
+            {!booked && (
               <span className="font-lora">
                 {items.length} of {MAX_VISIT_LIST} homes
               </span>
@@ -281,37 +257,37 @@ export function VisitListDrawer({
           </button>
         </header>
 
-        {results ? (
+        {booked ? (
           <div className="zx-drawer__body">
             <div className="zx-success" style={{ minHeight: 0 }}>
               <div className="zx-success__icon">
                 <CheckCircle2 />
               </div>
-              <p className="font-lora">
-                {failedCount === 0
-                  ? confirmation
-                  : "Some visits couldn't be booked and are still in your cart — please try those again."}
-              </p>
+              <p className="font-lora">{confirmation}</p>
             </div>
             <ul className="zx-vl-results font-lora">
-              {results.map((r) => (
-                <li key={r.property.id} className={`zx-vl-result zx-vl-result--${r.status}`}>
-                  {r.status === "failed" ? <AlertCircle /> : <CheckCircle2 />}
-                  <div>
-                    <strong>{r.property.title}</strong>
-                    <span>
-                      {fromDateKey(r.date).toLocaleDateString("en-IN", {
-                        weekday: "short",
-                        day: "numeric",
-                        month: "short",
-                      })}{" "}
-                      · {formatSlot(r.time)}
-                      {r.status === "already_scheduled" && " · already booked"}
-                      {r.status === "failed" && " · not booked"}
-                    </span>
-                  </div>
-                </li>
-              ))}
+              <li className="zx-vl-result zx-vl-result--scheduled">
+                <CalendarDays />
+                <div>
+                  <strong>
+                    {booked.homes.length > 1 ? `Tour of ${booked.homes.length} homes` : booked.homes[0].title}
+                  </strong>
+                  <span>
+                    {booked.homes.length > 1 ? "Starts " : ""}
+                    {dayLabel(booked.date)} · {formatSlot(booked.time)}
+                  </span>
+                </div>
+              </li>
+              {booked.homes.length > 1 &&
+                booked.homes.map((home) => (
+                  <li key={home.id} className="zx-vl-result zx-vl-result--scheduled">
+                    <CheckCircle2 />
+                    <div>
+                      <strong>{home.title}</strong>
+                      <span>{home.area || "Bengaluru"}</span>
+                    </div>
+                  </li>
+                ))}
             </ul>
             <button type="button" className="zx-btn zx-btn--block" onClick={close}>
               Done
@@ -324,7 +300,7 @@ export function VisitListDrawer({
             </div>
             <h3 className="font-heading">Your cart is empty</h3>
             <p className="font-lora">
-              Add homes you like to your cart, then book visits to one or all of them in one go.
+              Add homes you like to your cart, then visit them all in one tour.
             </p>
             <button type="button" className="zx-btn" onClick={close}>
               Browse homes
@@ -333,103 +309,88 @@ export function VisitListDrawer({
         ) : (
           <form className="zx-drawer__form" onSubmit={bookAll}>
             <div className="zx-drawer__body">
-              <div className="zx-book__label font-lora">
-                <CalendarDays /> Pick a time for each home
-              </div>
               <ul className="zx-vl-list">
-                {items.map((item) => {
-                  const slot = slotFor(item.id);
-                  const day = fromDateKey(slot.date);
-                  const taken = new Set(
-                    items
-                      .filter((other) => other.id !== item.id && slotFor(other.id).date === slot.date)
-                      .map((other) => slotFor(other.id).time)
-                  );
-                  const times = TIME_SLOTS.filter((t) => isSlotAvailable(day, t));
-                  return (
-                    <li key={item.id} className="zx-vl-item">
-                      <div className="zx-vl-item__top">
-                        <div className="zx-vl-item__thumb">
-                          {item.image ? (
-                            <img
-                              src={cardPhoto(item) || undefined}
-                              alt=""
-                              onError={fallBackToOriginal(item)}
-                            />
-                          ) : (
-                            <Images />
-                          )}
-                        </div>
-                        <div className="zx-vl-item__info">
-                          <span className="zx-card__location font-lora">
-                            <MapPin /> {item.area || "Bengaluru"}
-                          </span>
-                          <strong className="font-heading">{item.title}</strong>
-                          <span className="font-lora">{money(item.rent)} /mo</span>
-                        </div>
-                        <button
-                          type="button"
-                          className="zx-vl-item__remove"
-                          onClick={() => onRemove(item.id)}
-                          aria-label={`Remove ${item.title} from cart`}
-                        >
-                          <Trash2 />
-                        </button>
+                {items.map((item) => (
+                  <li key={item.id} className="zx-vl-item">
+                    <div className="zx-vl-item__top">
+                      <div className="zx-vl-item__thumb">
+                        {item.image ? (
+                          <img src={cardPhoto(item) || undefined} alt="" onError={fallBackToOriginal(item)} />
+                        ) : (
+                          <Images />
+                        )}
                       </div>
-                      <div className="zx-vl-item__when">
-                        <div className="zx__field">
-                          <CalendarDays className="zx__fieldIcon" />
-                          <select
-                            className="zx__select"
-                            value={slot.date}
-                            onChange={(e) => updateSlot(item.id, { date: e.target.value, time: "" })}
-                            aria-label={`Visit date for ${item.title}`}
-                          >
-                            {dates.map((d) => {
-                              const key = dateKey(d);
-                              return (
-                                <option
-                                  key={key}
-                                  value={key}
-                                  disabled={!TIME_SLOTS.some((t) => isSlotAvailable(d, t))}
-                                >
-                                  {d.toLocaleDateString("en-IN", {
-                                    weekday: "short",
-                                    day: "numeric",
-                                    month: "short",
-                                  })}
-                                </option>
-                              );
-                            })}
-                          </select>
-                          <ChevronDown className="zx__fieldChevron" />
-                        </div>
-                        <div className="zx__field">
-                          <Clock3 className="zx__fieldIcon" />
-                          <select
-                            required
-                            className="zx__select"
-                            value={slot.time}
-                            onChange={(e) => updateSlot(item.id, { time: e.target.value })}
-                            aria-label={`Visit time for ${item.title}`}
-                          >
-                            <option value="" disabled>
-                              Pick a time
-                            </option>
-                            {times.map((t) => (
-                              <option key={t} value={t} disabled={taken.has(t)}>
-                                {formatSlot(t)}
-                                {taken.has(t) ? " (another visit)" : ""}
-                              </option>
-                            ))}
-                          </select>
-                          <ChevronDown className="zx__fieldChevron" />
-                        </div>
+                      <div className="zx-vl-item__info">
+                        <span className="zx-card__location font-lora">
+                          <MapPin /> {item.area || "Bengaluru"}
+                        </span>
+                        <strong className="font-heading">{item.title}</strong>
+                        <span className="font-lora">{money(item.rent)} /mo</span>
                       </div>
-                    </li>
-                  );
-                })}
+                      <button
+                        type="button"
+                        className="zx-vl-item__remove"
+                        onClick={() => onRemove(item.id)}
+                        aria-label={`Remove ${item.title} from cart`}
+                      >
+                        <Trash2 />
+                      </button>
+                    </div>
+                  </li>
+                ))}
               </ul>
+
+              <div className="zx-book__step">
+                <div className="zx-book__label font-lora">
+                  <CalendarDays /> {isTour ? "When do you want to start your tour?" : "When do you want to visit?"}
+                </div>
+                <div className="zx-vl-item__when">
+                  <div className="zx__field">
+                    <CalendarDays className="zx__fieldIcon" />
+                    <select
+                      className="zx__select"
+                      value={slot.date}
+                      onChange={(e) => setSlot({ date: e.target.value, time: "" })}
+                      aria-label="Visit date"
+                    >
+                      {dates.map((d) => {
+                        const key = dateKey(d);
+                        return (
+                          <option key={key} value={key} disabled={!TIME_SLOTS.some((t) => isSlotAvailable(d, t))}>
+                            {dayLabel(key)}
+                          </option>
+                        );
+                      })}
+                    </select>
+                    <ChevronDown className="zx__fieldChevron" />
+                  </div>
+                  <div className="zx__field">
+                    <Clock3 className="zx__fieldIcon" />
+                    <select
+                      required
+                      className="zx__select"
+                      value={slot.time}
+                      onChange={(e) => setSlot((prev) => ({ ...prev, time: e.target.value }))}
+                      aria-label={isTour ? "Tour start time" : "Visit time"}
+                    >
+                      <option value="" disabled>
+                        {isTour ? "Start time" : "Pick a time"}
+                      </option>
+                      {times.map((t) => (
+                        <option key={t} value={t}>
+                          {formatSlot(t)}
+                        </option>
+                      ))}
+                    </select>
+                    <ChevronDown className="zx__fieldChevron" />
+                  </div>
+                </div>
+                {isTour && (
+                  <p className="zx-vl-tour__note font-lora">
+                    Our agent will plan the order of the homes and call you before the visit.
+                  </p>
+                )}
+              </div>
 
               <div className="zx-book__step">
                 <div className="zx-book__label font-lora">
@@ -442,12 +403,16 @@ export function VisitListDrawer({
             </div>
 
             <footer className="zx-drawer__foot">
-              <button type="submit" disabled={!allTimed || submitting} className="zx-btn zx-btn--block">
+              <button type="submit" disabled={!timed || submitting} className="zx-btn zx-btn--block">
                 {submitting
                   ? "Scheduling…"
-                  : allTimed
-                  ? `Book ${items.length} ${items.length === 1 ? "visit" : "visits"}`
-                  : "Pick a time for every home"}
+                  : !timed
+                  ? isTour
+                    ? "Pick a start time"
+                    : "Pick a time"
+                  : isTour
+                  ? `Book tour of ${items.length} homes`
+                  : "Book visit"}
               </button>
             </footer>
           </form>

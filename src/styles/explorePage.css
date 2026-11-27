@@ -1296,3 +1296,10 @@
     transition: none !important;
   }
 }
+
+.zx-vl-tour__note {
+  margin: 0.6rem 0 0;
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: var(--zx-muted);
+}
